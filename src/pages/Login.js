@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import isEmail from 'validator/lib/isEmail';
+import PropTypes from 'prop-types';
 
-function Login() {
+function Login(props) {
   const [disabled, setDisabled] = useState(true);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -20,12 +21,21 @@ function Login() {
   const handleInput = ({ target }) => {
     if (target.type === 'email') {
       setEmail(target.value);
-      return null;
     }
     if (target.type === 'password') {
       setPassword(target.value);
-      return null;
     }
+  };
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    const { history } = props;
+    console.log(history);
+    const userObj = { email };
+    localStorage.setItem('user', JSON.stringify(userObj));
+    localStorage.setItem('mealsToken', '1');
+    localStorage.setItem('cocktailsToken', '1');
+    history.push('/foods');
   };
 
   return (
@@ -55,6 +65,7 @@ function Login() {
         type="submit"
         disabled={ disabled }
         data-testid="login-submit-btn"
+        onClick={ handleSubmit }
       >
         Login
 
@@ -62,5 +73,9 @@ function Login() {
     </form>
   );
 }
+
+Login.propTypes = {
+  history: PropTypes.objectOf(PropTypes.any).isRequired,
+};
 
 export default Login;
