@@ -5,7 +5,7 @@ import GlobalContext from '../context/GlobalContext';
 function Drinks() {
   const { setheaderTitle } = useContext(GlobalContext);
   useEffect(() => {
-    setheaderTitle({ title: 'Drinks' });
+    setheaderTitle({ title: 'Drinks', search: true });
   }, [setheaderTitle]);
 
   return (

@@ -17,13 +17,14 @@ function Header() {
       <Link to="/profile">
         <img src={ profileIcon } alt="profileIcon" data-testid="profile-top-btn" />
       </Link>
-      <button type="button" onClick={ handleSearch }>
-        <img
-          src={ searchIcon }
-          alt="searchIcon"
-          data-testid="search-top-btn"
-        />
-      </button>
+      {headerTitle.search && (
+        <button type="button" onClick={ handleSearch }>
+          <img
+            src={ searchIcon }
+            alt="searchIcon"
+            data-testid="search-top-btn"
+          />
+        </button>)}
       {/* <SearchBar /> */}
     </header>
   );

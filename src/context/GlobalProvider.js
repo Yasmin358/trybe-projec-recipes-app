@@ -3,7 +3,7 @@ import React, { useState } from 'react';
 import GlobalContext from './GlobalContext';
 
 function GlobalProvider({ children }) {
-  const [headerTitle, setheaderTitle] = useState({ title: '' });
+  const [headerTitle, setheaderTitle] = useState({ title: '', search: true });
 
   return (
     <GlobalContext.Provider
