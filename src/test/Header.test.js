@@ -19,7 +19,6 @@ describe('Testa a página Login', () => {
     });
     expect(searchIcon).toBeInTheDocument();
     userEvent.click(searchIcon);
-    // screen.logTestingPlaygroundURL();
     const inputSearch = screen.getByTestId('search-input');
     expect(inputSearch).toBeInTheDocument();
   });
