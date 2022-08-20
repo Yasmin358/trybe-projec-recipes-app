@@ -18,14 +18,44 @@ function App() {
     <Switch>
       <GlobalProvider>
         <Route exact path="/" component={ Login } />
-        <Route exact path="/foods" component={ Foods } />
+
+        <Route
+          exact
+          path="/foods"
+          render={ (props) => (
+            <>
+              <Foods { ...props } />
+              <Footer { ...props } />
+            </>) }
+        />
         <Route path="/foods/:id" component={ Recipes } />
-        <Route path="/profile" component={ Profile } />
-        <Route exact path="/drinks" component={ Drinks } />
+        <Route path="/foods/:id/in-progress" component={ Recipes } />
+
+        <Route
+          path="/profile"
+          render={ (props) => (
+            <>
+              <Profile { ...props } />
+              <Footer { ...props } />
+            </>) }
+        />
+
+        <Route
+          exact
+          path="/drinks"
+          render={ (props) => (
+            <>
+              <Drinks { ...props } />
+              <Footer { ...props } />
+            </>) }
+        />
         <Route path="/drinks/:id" component={ DrinksRecipes } />
+        <Route path="/drinks/:id/in-progress" component={ DrinksRecipes } />
+
         <Route path="/done-recipes" component={ DoneRecipes } />
+
         <Route path="/favorite-recipes" component={ FavoriteRecipes } />
-        <Route path="/" component={ Footer } />
+
       </GlobalProvider>
     </Switch>
   );
