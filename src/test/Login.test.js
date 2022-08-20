@@ -14,10 +14,8 @@ describe('Testa a página Login', () => {
   test('Testa se o botão é habilitado corretamente', () => {
     render(<BrowserRouter><App /></BrowserRouter>);
     const emailInput = screen.getByLabelText('Email:');
-    // screen.logTestingPlaygroundURL();
     const passwordInput = screen.getByTestId('password-input');
     const btn = screen.getByRole('button');
-
     userEvent.type(emailInput, 'nome@nome.com');
     userEvent.type(passwordInput, '1234567');
     expect(btn.disabled).toBe(false);

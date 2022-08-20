@@ -2,17 +2,18 @@ import React, { useContext, useEffect } from 'react';
 import Header from '../components/Header';
 import GlobalContext from '../context/GlobalContext';
 
-function Foods() {
+function DoneRecipes() {
   const { setheaderTitle } = useContext(GlobalContext);
   useEffect(() => {
-    setheaderTitle({ title: 'Foods', search: true });
+    setheaderTitle({ title: 'Done Recipes', search: false });
   }, [setheaderTitle]);
+
   return (
     <>
       <Header />
-      <main>Foods</main>
+      <main>DoneRecipes</main>
     </>
   );
 }
 
-export default Foods;
+export default DoneRecipes;

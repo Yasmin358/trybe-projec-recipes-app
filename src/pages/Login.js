@@ -8,8 +8,6 @@ function Login(props) {
   const [password, setPassword] = useState('');
 
   useEffect(() => {
-    console.log(password.length);
-    console.log(password);
     const SIX = 6;
     if (password.length > SIX && isEmail(email)) {
       setDisabled(false);
@@ -30,7 +28,6 @@ function Login(props) {
   const handleSubmit = (e) => {
     e.preventDefault();
     const { history } = props;
-    console.log(history);
     const userObj = { email };
     localStorage.setItem('user', JSON.stringify(userObj));
     localStorage.setItem('mealsToken', '1');
