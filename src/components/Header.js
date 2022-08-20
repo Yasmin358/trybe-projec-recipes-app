@@ -1,14 +1,19 @@
 import { Link } from 'react-router-dom';
-import React, { useContext } from 'react';
+import React, { useContext, useState } from 'react';
 import GlobalContext from '../context/GlobalContext';
-// import SearchBar from './SearchBar';
+import SearchBar from './SearchBar';
 import profileIcon from '../images/profileIcon.svg';
 import searchIcon from '../images/searchIcon.svg';
 
 function Header() {
   const { headerTitle } = useContext(GlobalContext);
-  const handleSearch = () => {
-    // função para esconder e mostrar o componente de busca
+  const [searchMenu, setsearchMenu] = useState({ showMenu: false });
+
+  const handleSearch = (event) => {
+    event.preventDefault();
+    const changeHide = searchMenu;
+    changeHide.showMenu = !changeHide.showMenu;
+    setsearchMenu({ ...changeHide });
   };
 
   return (
@@ -25,7 +30,8 @@ function Header() {
             data-testid="search-top-btn"
           />
         </button>)}
-      {/* <SearchBar /> */}
+      {searchMenu.showMenu
+      && <SearchBar />}
     </header>
   );
 }
