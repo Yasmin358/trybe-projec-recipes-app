@@ -1,4 +1,10 @@
-import React, { useState } from 'react';
+import React, { useContext, useState } from 'react';
+import GlobalContext from '../context/GlobalContext';
+import {
+  foodsFilterIngredients,
+  foodsFilterNome,
+  foodsFilterFirstLetter,
+} from '../services/themealdb';
 
 function SearchBar() {
   const [filter, setFilter] = useState(
@@ -7,6 +13,7 @@ function SearchBar() {
       radios: '',
     },
   );
+  const { setRecipesAPIReturn } = useContext(GlobalContext);
 
   const handleInput = ({ target }) => {
     setFilter((oldState) => ({ ...oldState,
@@ -14,9 +21,31 @@ function SearchBar() {
     }));
   };
 
+  const handleSubmit = async (event) => {
+    event.preventDefault();
+    const { radios, SearchInput } = filter;
+
+    if (radios === 'firstLetter' && SearchInput.length > 1) {
+      return global.alert('Your search must have only 1 (one) character');
+    }
+    switch (radios) {
+    case 'ingredientes':
+      setRecipesAPIReturn(await foodsFilterIngredients(SearchInput));
+      break;
+    case 'name':
+      setRecipesAPIReturn(await foodsFilterNome(SearchInput));
+      break;
+    case 'firstLetter':
+      setRecipesAPIReturn(await foodsFilterFirstLetter(SearchInput));
+      break;
+    default:
+      return radios;
+    }
+  };
+
   const { SearchInput } = filter;
   return (
-    <form>
+    <form onSubmit={ handleSubmit }>
       <input
         name="SearchInput"
         type="text"
@@ -32,7 +61,7 @@ function SearchBar() {
           type="radio"
           data-testid="ingredient-search-radio"
           name="radios"
-          value="ingredientes "
+          value="ingredientes"
           onChange={ handleInput }
         />
       </label>
