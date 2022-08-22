@@ -1,5 +1,6 @@
 import React, { useContext, useEffect } from 'react';
 import Header from '../components/Header';
+import SearchBar from '../components/SearchBar';
 import GlobalContext from '../context/GlobalContext';
 
 function Foods() {
@@ -10,6 +11,7 @@ function Foods() {
   return (
     <>
       <Header />
+      <SearchBar />
       <main>Foods</main>
     </>
   );

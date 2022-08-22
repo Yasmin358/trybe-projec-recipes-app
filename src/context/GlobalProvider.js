@@ -4,12 +4,18 @@ import GlobalContext from './GlobalContext';
 
 function GlobalProvider({ children }) {
   const [headerTitle, setheaderTitle] = useState({ title: '', search: true });
+  const [recipesAPIReturn, setRecipesAPIReturn] = useState('');
+
+  const store = {
+    recipesAPIReturn,
+    setRecipesAPIReturn,
+    headerTitle,
+    setheaderTitle,
+  };
 
   return (
     <GlobalContext.Provider
-      value={ {
-        headerTitle, setheaderTitle,
-      } }
+      value={ store }
     >
       {children}
     </GlobalContext.Provider>
