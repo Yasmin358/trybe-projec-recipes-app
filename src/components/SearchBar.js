@@ -1,32 +1,45 @@
 import React from 'react';
 
-const SearchBar = () => {
-  return(
+function SearchBar() {
+  return (
     <form>
       <input
-      type="text"
-      placeholder="Search Recipe"
+        type="text"
+        placeholder="Search Recipe"
+        data-testid="search-input"
       />
-      <label>
+      <label htmlFor="Ingredientes">
         Ingredientes
-        <input 
-        type="radio"
+        <input
+          id="Ingredientes"
+          type="radio"
+          data-testid="ingredient-search-radio"
         />
       </label>
-      <label>
+      <label htmlFor="name">
         Name
-        <input 
-        type="radio"
+        <input
+          id="name"
+          type="radio"
+          data-testid="name-search-radio"
         />
       </label>
-      <label>
+      <label htmlFor="firstLetter">
         First Letter
-        <input 
-        type="radio"
+        <input
+          id="firstLetter"
+          type="radio"
+          data-testid="first-letter-search-radio"
         />
       </label>
+      <button
+        type="submit"
+        data-testid="exec-search-btn"
+      >
+        Pesquisar
+      </button>
     </form>
-  )
+  );
 }
 
 export default SearchBar;
