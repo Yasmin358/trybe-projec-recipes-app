@@ -1,0 +1,12 @@
+.main {
+  background-color: rgba(224, 224, 224, 0.534);
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20px;
+  justify-content: center;
+  text-align: center;
+}
+
+.main img {
+  height: 100px;
+}
