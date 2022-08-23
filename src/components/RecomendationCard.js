@@ -31,12 +31,13 @@ function RecomendationCard(props) {
       <figure
         data-testid={ `${i}-recomendation-card` }
         key={ el.idMeal || el.idDrinks }
+        className={ i > 1 ? 'hidden' : '' }
       >
         <img
           src={ el.strMealThumb || el.strDrinkThumb }
           alt={ el.strMeal || el.strDrink }
         />
-        <h4>{el.strMeal || el.strDrink }</h4>
+        <h4 data-testid={ `${i}-recomendation-title` }>{el.strMeal || el.strDrink }</h4>
         <p>{el.strCategory || el.strAlcoholic }</p>
       </figure>
     ));
