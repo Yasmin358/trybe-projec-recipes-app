@@ -1,6 +1,7 @@
 import React from 'react';
 
-function Recipes() {
+function Recipes(props) {
+  console.log(props);
   return (
     <main>Recipes</main>
   );

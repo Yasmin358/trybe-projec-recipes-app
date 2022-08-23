@@ -7,7 +7,7 @@ import Login from './pages/Login';
 import Foods from './pages/Foods';
 import Profile from './pages/Profile';
 import Drinks from './pages/Drinks';
-import Recipes from './pages/Recipes';
+import RecipesDetails from './pages/RecipesDetails';
 import DrinksRecipes from './pages/DrinksRecipes';
 import DoneRecipes from './pages/DoneRecipes';
 import FavoriteRecipes from './pages/FavoriteRecipes';
@@ -28,8 +28,8 @@ function App() {
               <Footer { ...props } />
             </>) }
         />
-        <Route path="/foods/:id" component={ Recipes } />
-        <Route path="/foods/:id/in-progress" component={ Recipes } />
+        <Route path="/foods/:id" component={ RecipesDetails } />
+        <Route path="/foods/:id/in-progress" component={ RecipesDetails } />
 
         <Route
           path="/profile"
