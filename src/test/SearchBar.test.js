@@ -5,6 +5,8 @@ import { render, screen } from '@testing-library/react';
 import GlobalContext from '../context/GlobalContext';
 import App from '../App';
 import MockMeal from '../services/MockMeal';
+import { renderWithRouter } from '../test/helpers/renderWithRouter'
+import SearchBar from '../components/SearchBar';
 
 describe('Verifica a cobertura do componente SearchBar', () => {
   const mockJest = () => {
@@ -13,6 +15,8 @@ describe('Verifica a cobertura do componente SearchBar', () => {
       json: jest.fn().mockResolvedValue(MockMeal),
     });
   };
+
+  global.alert = jest.fn();
 
   afterEach(() => jest.clearAllMocks());
   beforeEach(() => mockJest());
@@ -126,5 +130,106 @@ describe('Verifica a cobertura do componente SearchBar', () => {
     userEvent.click(buton);
 
     expect(global.fetch).toHaveBeenCalled();
+  });
+
+  test('Testa a filtro dos radios buttons Foods (firstLetter)', async () => {
+    render(<BrowserRouter><App /></BrowserRouter>, '/');
+    const changeToFoods = screen.getByTestId('food-bottom-btn');
+
+    userEvent.click(changeToFoods);
+
+    expect(document.location.pathname).toBe('/foods');
+
+    const searchButton = screen.getByTestId('search-top-btn');
+
+    userEvent.click(searchButton);
+
+    const inputText = screen.getByTestId('search-input');
+    const firstLetteradio = screen.getByTestId('first-letter-search-radio');
+    const buton = screen.getByTestId('exec-search-btn');
+
+    userEvent.type(inputText, 'l');
+    userEvent.click(firstLetteradio);
+    userEvent.click(buton);
+
+    expect(global.fetch).toHaveBeenCalled();
+  });
+
+  test('Testa a filtro dos radios buttons Foods (firstLetter - none)', async () => {
+    render(<BrowserRouter><App /></BrowserRouter>, '/');
+    const changeToFoods = screen.getByTestId('food-bottom-btn');
+
+    userEvent.click(changeToFoods);
+
+    expect(document.location.pathname).toBe('/foods');
+
+    const searchButton = screen.getByTestId('search-top-btn');
+
+    userEvent.click(searchButton);
+
+    const inputText = screen.getByTestId('search-input');
+    const buton = screen.getByTestId('exec-search-btn');
+
+    userEvent.type(inputText, 'lemon');
+    userEvent.click(buton);
+
+    expect(global.fetch).not.toHaveBeenCalledWith('https://www.themealdb.com/api/json/v1/1/filter.php?i=lemon');
+    expect(global.fetch).not.toHaveBeenCalledWith('https://www.themealdb.com/api/json/v1/1/search.php?s=lemon');
+    expect(global.fetch).not.toHaveBeenCalledWith('https://www.themealdb.com/api/json/v1/1/search.php?f=lemon');
+  });
+
+  // Cont. from here:
+  test.only('Testa a filtro dos radios buttons Drinks (ingredients)', async () => {
+    render(
+      <GlobalContext.Provider value={ store }>
+        <BrowserRouter>
+          <SearchBar />
+        </BrowserRouter>
+      </GlobalContext.Provider>,
+    );
+    const changeToDrinks = screen.getByTestId('drinks-bottom-btn');
+    userEvent.click(changeToDrinks);
+    expect(document.location.pathname).toBe('/drinks');
+    const searchButton = screen.getByTestId('search-top-btn');
+    userEvent.click(searchButton);
+    const inputText = screen.getByTestId('search-input');
+    const ingredientsRadio = screen.getByTestId('ingredient-search-radio');
+    const buton = screen.getByTestId('exec-search-btn');
+    userEvent.type(inputText, 'lemon');
+    userEvent.click(ingredientsRadio);
+    userEvent.click(buton);
+    expect(global.fetch).toHaveBeenCalled();
+    const nameRadio = screen.getByTestId('name-search-radio');
+    userEvent.type(inputText, 'vodka');
+    userEvent.click(nameRadio);
+    userEvent.click(buton);
+    expect(global.fetch).toHaveBeenCalled();
+    const THREE = 3000;
+    await new Promise((res) => setTimeout(res(1), THREE));
+    console.log(document.location.pathname);
+    expect(document.location.pathname.includes('/drinks/')).toBe(true);
+  });
+
+  test('Testa a filtro dos radios buttons Drinks(no selection)', async () => {
+    render(<BrowserRouter><App /></BrowserRouter>, '/');
+    const changeToDrinks = screen.getByTestId('drinks-bottom-btn');
+
+    userEvent.click(changeToDrinks);
+
+    expect(document.location.pathname).toBe('/drinks');
+
+    const searchButton = screen.getByTestId('search-top-btn');
+
+    userEvent.click(searchButton);
+
+    const inputText = screen.getByTestId('search-input');
+    const buton = screen.getByTestId('exec-search-btn');
+
+    userEvent.type(inputText, 'vodka');
+    userEvent.click(buton);
+
+    expect(global.fetch).not.toHaveBeenCalledWith('https://www.thecocktaildb.com/api/json/v1/1/filter.php?i=vodka');
+    expect(global.fetch).not.toHaveBeenCalledWith('https://www.thecocktaildb.com/api/json/v1/1/search.php?s=vodka');
+    expect(global.fetch).not.toHaveBeenCalledWith('https://www.thecocktaildb.com/api/json/v1/1/search.php?f=vodka');
   });
 });
