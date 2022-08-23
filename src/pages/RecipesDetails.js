@@ -29,6 +29,14 @@ function RecipesDetails(props) {
       <>
         <DetailsCard { ...recipe } />
         <RecomendationCard />
+        <button
+          type="button"
+          data-testid="start-recipe-btn"
+          className="btn btn--start"
+        >
+          Start Recipe
+
+        </button>
       </>
     )
   );

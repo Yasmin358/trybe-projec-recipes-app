@@ -1,7 +1,13 @@
+/* UTILITY CLASSES */
 .hidden {
   display: none;
 }
 
+/* RECIPES DETAILS */
+.btn--start {
+  bottom: 0;
+  position: fixed;
+}
 
 /* FOOTER */
 .footer {
