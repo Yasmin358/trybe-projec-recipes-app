@@ -28,6 +28,7 @@ function App() {
               <Footer { ...props } />
             </>) }
         />
+        {/* Os detalhes de bebidas e comidas são renderizados no mesmo componente (req. 24) */}
         <Route path="/foods/:id" component={ RecipesDetails } />
         <Route path="/foods/:id/in-progress" component={ RecipesDetails } />
 
@@ -49,8 +50,9 @@ function App() {
               <Footer { ...props } />
             </>) }
         />
-        <Route path="/drinks/:id" component={ DrinksRecipes } />
-        <Route path="/drinks/:id/in-progress" component={ DrinksRecipes } />
+        {/* Os detalhes de bebidas e comidas são renderizados no mesmo componente (req. 24) */}
+        <Route path="/drinks/:id" component={ RecipesDetails } />
+        <Route path="/drinks/:id/in-progress" component={ RecipesDetails } />
 
         <Route path="/done-recipes" component={ DoneRecipes } />
 
