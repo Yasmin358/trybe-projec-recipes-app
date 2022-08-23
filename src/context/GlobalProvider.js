@@ -9,6 +9,7 @@ function GlobalProvider({ children }) {
   const [apiFoods, setapiFoods] = useState([]);
   const [apiDrinksCategory, setdrinksCategory] = useState([]);
   const [apiFoodsCategory, setfoodsCategory] = useState([]);
+  const [toogleButton, settoogleButton] = useState('');
 
   async function requestFoodApi(endpoint) {
     const responseFoods = await foods(endpoint);
@@ -55,7 +56,10 @@ function GlobalProvider({ children }) {
 
   const filterHandleClick = async (event) => {
     event.preventDefault();
-    if (event.target.name === 'All') {
+    const button = toogleButton;
+    console.log(button);
+    if (event.target.name === 'All' || event.target.name === button) {
+      settoogleButton(event.target.name);
       const url = 'search.php?s=';
       if (headerTitle.title === 'Drinks') {
         const callApi = await callApiDrinks(url);
@@ -68,11 +72,13 @@ function GlobalProvider({ children }) {
     const url = `filter.php?c=${event.target.name}`;
     if (headerTitle.title === 'Drinks') {
       const callApi = await callApiDrinks(url);
-      setapiDrinks(callApi);
+      settoogleButton(event.target.name);
+      return setapiDrinks(callApi);
     }
     if (headerTitle.title === 'Foods') {
       const callApi = await callApiFoods(url);
-      setapiFoods(callApi);
+      settoogleButton(event.target.name);
+      return setapiFoods(callApi);
     }
   };
 
