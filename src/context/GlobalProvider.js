@@ -1,7 +1,7 @@
 import PropTypes from 'prop-types';
 import React, { useEffect, useState } from 'react';
 import GlobalContext from './GlobalContext';
-import { drinks, drinksCategory, foods, foodsCategory } from '../services/themealdb';
+import { drinks, foods } from '../services/themealdb';
 
 function GlobalProvider({ children }) {
   const [headerTitle, setheaderTitle] = useState({ title: '', search: true });
@@ -10,20 +10,71 @@ function GlobalProvider({ children }) {
   const [apiDrinksCategory, setdrinksCategory] = useState([]);
   const [apiFoodsCategory, setfoodsCategory] = useState([]);
 
-  async function requestDrinksFoodsApi() {
-    const responseDrinks = await drinks();
-    const responseDrinkCategory = await drinksCategory();
-    const responseFoods = await foods();
-    const responseFoodsCategory = await foodsCategory();
-    setapiDrinks(responseDrinks);
-    setdrinksCategory(responseDrinkCategory);
-    setfoodsCategory(responseFoodsCategory);
-    setapiFoods(responseFoods);
+  async function requestFoodApi(endpoint) {
+    const responseFoods = await foods(endpoint);
+    return responseFoods;
+  }
+  async function requestDrinksApi(endpoint) {
+    const responseDrinks = await drinks(endpoint);
+    return responseDrinks;
   }
 
+  // monta array de foods e drinks
   useEffect(() => {
-    requestDrinksFoodsApi();
+    const url = 'search.php?s=';
+    async function fetch() {
+      const getDrinks = await requestDrinksApi(url);
+      const getFoods = await requestFoodApi(url);
+      setapiDrinks(getDrinks);
+      setapiFoods(getFoods);
+    }
+    fetch();
   }, []);
+
+  // monta array de categorias foods e drinks
+  useEffect(() => {
+    const url = 'list.php?c=list';
+    async function fetch() {
+      const getCategoryDrinks = await requestDrinksApi(url);
+      const getCategoryFoods = await requestFoodApi(url);
+      setdrinksCategory(getCategoryDrinks);
+      setfoodsCategory(getCategoryFoods);
+    }
+    fetch();
+  }, []);
+
+  const callApiFoods = async (url) => {
+    const apiResponse = await foods(url);
+    return apiResponse;
+  };
+
+  const callApiDrinks = async (url) => {
+    const apiResponse = await drinks(url);
+    return apiResponse;
+  };
+
+  const filterHandleClick = async (event) => {
+    event.preventDefault();
+    if (event.target.name === 'All') {
+      const url = 'search.php?s=';
+      if (headerTitle.title === 'Drinks') {
+        const callApi = await callApiDrinks(url);
+        return setapiDrinks(callApi);
+      } if (headerTitle.title === 'Foods') {
+        const callApi = await callApiFoods(url);
+        return setapiFoods(callApi);
+      }
+    }
+    const url = `filter.php?c=${event.target.name}`;
+    if (headerTitle.title === 'Drinks') {
+      const callApi = await callApiDrinks(url);
+      setapiDrinks(callApi);
+    }
+    if (headerTitle.title === 'Foods') {
+      const callApi = await callApiFoods(url);
+      setapiFoods(callApi);
+    }
+  };
 
   return (
     <GlobalContext.Provider
@@ -34,6 +85,7 @@ function GlobalProvider({ children }) {
         apiFoods,
         apiDrinksCategory,
         apiFoodsCategory,
+        filterHandleClick,
       } }
     >
       {children}

@@ -1,28 +1,14 @@
-export const foods = async () => {
-  const url = 'https://www.themealdb.com/api/json/v1/1/search.php?s=';
+export const foods = async (endpoint) => {
+  const url = `https://www.themealdb.com/api/json/v1/1/${endpoint}`;
   const response = await fetch(url);
   const data = await response.json();
   return data.meals;
 };
-
-export const drinks = async () => {
-  const url = 'https://www.thecocktaildb.com/api/json/v1/1/search.php?s=';
+// const url = `https://www.themealdb.com/api/json/v1/1/filter.php?c=${food}`;
+export const drinks = async (endpoint) => {
+  const url = `https://www.thecocktaildb.com/api/json/v1/1/${endpoint}`;
   const response = await fetch(url);
   const data = await response.json();
   return data.drinks;
 };
-
-export const foodsCategory = async () => {
-  const url = 'https://www.themealdb.com/api/json/v1/1/list.php?c=list';
-  const response = await fetch(url);
-  const data = await response.json();
-
-  return data.meals;
-};
-
-export const drinksCategory = async () => {
-  const url = 'https://www.thecocktaildb.com/api/json/v1/1/list.php?c=list';
-  const response = await fetch(url);
-  const data = await response.json();
-  return data.drinks;
-};
+// const url = `https://www.thecocktaildb.com/api/json/v1/1/filter.php?c=${drink}`;

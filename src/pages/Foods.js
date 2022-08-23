@@ -8,7 +8,11 @@ const maxItems = 12;
 const maxCategorys = 5;
 
 function Foods() {
-  const { setheaderTitle, apiFoods, apiFoodsCategory } = useContext(GlobalContext);
+  const { apiFoods,
+    apiFoodsCategory,
+    filterHandleClick,
+    setheaderTitle } = useContext(GlobalContext);
+
   useEffect(() => {
     setheaderTitle({ title: 'Foods', search: true });
   }, [setheaderTitle]);
@@ -18,6 +22,15 @@ function Foods() {
       <Header />
       <main className="main">
         <div className="category">
+          <button
+            name="All"
+            type="button"
+            data-testid="All-category-filter"
+            onClick={ filterHandleClick }
+          >
+            All
+
+          </button>
           {apiFoodsCategory.map((category, index) => (
             index < maxCategorys
           && <Category
