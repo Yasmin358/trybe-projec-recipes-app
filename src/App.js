@@ -8,7 +8,7 @@ import Foods from './pages/Foods';
 import Profile from './pages/Profile';
 import Drinks from './pages/Drinks';
 import RecipesDetails from './pages/RecipesDetails';
-import DrinksRecipes from './pages/DrinksRecipes';
+// import DrinksRecipes from './pages/DrinksRecipes';
 import DoneRecipes from './pages/DoneRecipes';
 import FavoriteRecipes from './pages/FavoriteRecipes';
 import Footer from './components/Footer';

@@ -1,5 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
+import DetailsCard from '../components/DetailsCard';
+import RecomendationCard from '../components/RecomendationCard';
 
 function RecipesDetails(props) {
   const { match: { params: { id } }, history } = props;
@@ -15,15 +17,20 @@ function RecipesDetails(props) {
   // Chamada da API realizada na montagem deste componente:
   // TODO: Ajustar este fetch depois da atualizalação dos requisitos anteriores
   useEffect(() => {
-    console.log(url);
     fetch(url)
       .then((res) => res.json())
-      .then((data) => setRecipe(data.drinks.at(0)))
+      .then((data) => setRecipe(data[`${route === 'foods' ? 'meals' : 'drinks'}`].at(0)))
       .catch((err) => console.error(`SOMETHING WENT WRONG 💣💣💣: ${err}`));
-  }, [url]);
+  }, [url, route]);
 
   return (
-    <main>RecipesDetails</main>
+    recipe
+    && (
+      <>
+        <DetailsCard { ...recipe } />
+        <RecomendationCard />
+      </>
+    )
   );
 }
 
