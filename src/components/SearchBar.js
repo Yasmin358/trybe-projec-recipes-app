@@ -1,9 +1,12 @@
-import React, { useContext, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import GlobalContext from '../context/GlobalContext';
 import {
   foodsFilterIngredients,
   foodsFilterNome,
   foodsFilterFirstLetter,
+  drinkFilterIngredients,
+  drinkFilterNome,
+  drinkFilterFirstLetter,
 } from '../services/themealdb';
 
 function SearchBar() {
@@ -13,7 +16,7 @@ function SearchBar() {
       radios: '',
     },
   );
-  const { setRecipesAPIReturn } = useContext(GlobalContext);
+  const { recipesAPIReturn, setRecipesAPIReturn } = useContext(GlobalContext);
 
   const handleInput = ({ target }) => {
     setFilter((oldState) => ({ ...oldState,
@@ -21,8 +24,7 @@ function SearchBar() {
     }));
   };
 
-  const handleSubmit = async (event) => {
-    event.preventDefault();
+  const foodFunction = async () => {
     const { radios, SearchInput } = filter;
 
     if (radios === 'firstLetter' && SearchInput.length > 1) {
@@ -42,6 +44,46 @@ function SearchBar() {
       return radios;
     }
   };
+
+  const drinkFunction = async () => {
+    const { radios, SearchInput } = filter;
+
+    if (radios === 'firstLetter' && SearchInput.length > 1) {
+      return global.alert('Your search must have only 1 (one) character');
+    }
+    switch (radios) {
+    case 'ingredientes':
+      setRecipesAPIReturn(await drinkFilterIngredients(SearchInput));
+      break;
+    case 'name':
+      setRecipesAPIReturn(await drinkFilterNome(SearchInput));
+      break;
+    case 'firstLetter':
+      setRecipesAPIReturn(await drinkFilterFirstLetter(SearchInput));
+      break;
+    default:
+      return radios;
+    }
+  };
+
+  const handleSubmit = (event) => {
+    event.preventDefault();
+    console.log(document.location.pathname);
+    if (document.location.pathname === '/foods') {
+      return foodFunction();
+    }
+    return drinkFunction();
+  };
+
+  useEffect(() => {
+    const { meals, drinks } = recipesAPIReturn;
+    if (meals?.length === 1) {
+      document.location.pathname = `/foods/${recipesAPIReturn.meals[0].idMeal}`;
+    }
+    if (drinks?.length === 1) {
+      document.location.pathname = `/drinks/${recipesAPIReturn.drinks[0].idDrink}`;
+    }
+  }, [recipesAPIReturn]);
 
   const { SearchInput } = filter;
   return (
