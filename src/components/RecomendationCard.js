@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from 'react';
 
-function RecomendationCard(props) {
-  console.log(props);
+function RecomendationCard() {
   const { pathname } = document.location;
   const route = pathname.split(/\b/, 2).at(1);
   const url = `https://www.the${

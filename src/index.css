@@ -30,6 +30,7 @@ html, body {
   5. Improve text rendering
 */
 body {
+  background-color: #f9f5f3;
   line-height: 1.5;
   font-size: 1.6rem;
   -webkit-font-smoothing: antialiased;
