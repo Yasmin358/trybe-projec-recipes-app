@@ -17,6 +17,7 @@ function Drinks() {
     setheaderTitle({ title: 'Drinks', search: true });
   }, [setheaderTitle]);
 
+  console.log(apiDrinks);
   return (
     <>
       <Header />
@@ -43,7 +44,8 @@ function Drinks() {
           {apiDrinks.map((food, index) => (
             index < maxItems
           && <Card
-            key={ food.strDrink }
+            key={ food.idDrink }
+            id={ food.idDrink }
             testid={ `${index}-recipe-card` }
             imagem={ food.strDrinkThumb }
             name={ food.strDrink }
