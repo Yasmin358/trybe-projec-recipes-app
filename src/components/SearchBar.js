@@ -68,7 +68,6 @@ function SearchBar() {
 
   const handleSubmit = (event) => {
     event.preventDefault();
-    console.log(document.location.pathname);
     if (document.location.pathname === '/foods') {
       return foodFunction();
     }

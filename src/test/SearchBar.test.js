@@ -5,8 +5,6 @@ import { render, screen } from '@testing-library/react';
 import GlobalContext from '../context/GlobalContext';
 import App from '../App';
 import MockMeal from '../services/MockMeal';
-// import { drinkFilterIngredients } from '../services/themealdb';
-// import SearchBar from '../components/SearchBar';
 
 describe('Verifica a cobertura do componente SearchBar', () => {
   const mockJest = () => {
