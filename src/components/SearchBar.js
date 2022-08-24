@@ -10,13 +10,13 @@ import {
 } from '../services/themealdb';
 
 function SearchBar() {
+  const { setapiFoods, setapiDrinks, apiFoods, apiDrinks } = useContext(GlobalContext);
   const [filter, setFilter] = useState(
     {
       SearchInput: '',
       radios: '',
     },
   );
-  const { recipesAPIReturn, setRecipesAPIReturn } = useContext(GlobalContext);
 
   const handleInput = ({ target }) => {
     setFilter((oldState) => ({ ...oldState,
@@ -32,13 +32,14 @@ function SearchBar() {
     }
     switch (radios) {
     case 'ingredientes':
-      setRecipesAPIReturn(await foodsFilterIngredients(SearchInput));
+      setapiFoods(await foodsFilterIngredients(SearchInput));
       break;
     case 'name':
-      setRecipesAPIReturn(await foodsFilterNome(SearchInput));
+      // console.log(await foodsFilterNome(SearchInput));
+      setapiFoods(await foodsFilterNome(SearchInput));
       break;
     case 'firstLetter':
-      setRecipesAPIReturn(await foodsFilterFirstLetter(SearchInput));
+      setapiFoods(await foodsFilterFirstLetter(SearchInput));
       break;
     default:
       return global
@@ -54,13 +55,13 @@ function SearchBar() {
     }
     switch (radios) {
     case 'ingredientes':
-      setRecipesAPIReturn(await drinkFilterIngredients(SearchInput));
+      setapiDrinks(await drinkFilterIngredients(SearchInput));
       break;
     case 'name':
-      setRecipesAPIReturn(await drinkFilterNome(SearchInput));
+      setapiDrinks(await drinkFilterNome(SearchInput));
       break;
     case 'firstLetter':
-      setRecipesAPIReturn(await drinkFilterFirstLetter(SearchInput));
+      setapiDrinks(await drinkFilterFirstLetter(SearchInput));
       break;
     default:
       return global
@@ -77,18 +78,19 @@ function SearchBar() {
   };
 
   useEffect(() => {
-    const { meals, drinks } = recipesAPIReturn;
+    const meals = apiFoods;
+    const drinks = apiDrinks;
     if (meals?.length === 1) {
-      document.location.pathname = `/foods/${recipesAPIReturn.meals[0].idMeal}`;
+      document.location.pathname = `/foods/${meals[0].idMeal}`;
     }
     if (drinks?.length === 1) {
-      document.location.pathname = `/drinks/${recipesAPIReturn.drinks[0].idDrink}`;
+      document.location.pathname = `/drinks/${drinks[0].idDrink}`;
     }
-  }, [recipesAPIReturn]);
+  }, [apiFoods, apiDrinks]);
 
   const { SearchInput } = filter;
   return (
-    <form onSubmit={ handleSubmit }>
+    <form>
       <input
         name="SearchInput"
         type="text"
@@ -133,6 +135,7 @@ function SearchBar() {
       <button
         type="submit"
         data-testid="exec-search-btn"
+        onClick={ handleSubmit }
       >
         Pesquisar
       </button>

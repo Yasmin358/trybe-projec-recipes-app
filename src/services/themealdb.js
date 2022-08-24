@@ -20,9 +20,9 @@ export const foodsFilterIngredients = async (ingrediente) => {
   const data = await response.json();
   if (data.meals === null) {
     global.alert(nullAlertMsg);
-    return data;
+    return data.meals;
   }
-  return data;
+  return data.meals;
 };
 
 export const foodsFilterNome = async (nome) => {
@@ -31,9 +31,9 @@ export const foodsFilterNome = async (nome) => {
   const data = await response.json();
   if (data.meals === null) {
     global.alert(nullAlertMsg);
-    return data;
+    return data.meals;
   }
-  return data;
+  return data.meals;
 };
 
 export const foodsFilterFirstLetter = async (firstLetter) => {
@@ -42,9 +42,9 @@ export const foodsFilterFirstLetter = async (firstLetter) => {
   const data = await response.json();
   if (data.meals === null) {
     global.alert(nullAlertMsg);
-    return data;
+    return data.meals;
   }
-  return data;
+  return data.meals;
 };
 
 export const drinkFilterIngredients = async (ingrediente) => {
@@ -53,9 +53,9 @@ export const drinkFilterIngredients = async (ingrediente) => {
   const data = await response.json();
   if (data.drinks === null) {
     global.alert(nullAlertMsg);
-    return data;
+    return data.drinks;
   }
-  return data;
+  return data.drinks;
 };
 
 export const drinkFilterNome = async (nome) => {
@@ -64,9 +64,9 @@ export const drinkFilterNome = async (nome) => {
   const data = await response.json();
   if (data.drinks === null) {
     global.alert(nullAlertMsg);
-    return data;
+    return data.drinks;
   }
-  return data;
+  return data.drinks;
 };
 
 export const drinkFilterFirstLetter = async (firstLetter) => {
@@ -75,7 +75,7 @@ export const drinkFilterFirstLetter = async (firstLetter) => {
   const data = await response.json();
   if (data.drinks === null) {
     global.alert(nullAlertMsg);
-    return data;
+    return data.drinks;
   }
-  return data;
+  return data.drinks;
 };

@@ -21,15 +21,6 @@ function GlobalProvider({ children }) {
     return responseDrinks;
   }
 
-  const callApiDrinks = async (url) => {
-    const apiResponse = await drinks(url);
-    return apiResponse;
-  };
-  const callApiFoods = async (url) => {
-    const apiResponse = await foods(url);
-    return apiResponse;
-  };
-
   const filterHandleClick = async (event) => {
     event.preventDefault();
     const button = toogleButton;
@@ -37,22 +28,22 @@ function GlobalProvider({ children }) {
       settoogleButton(event.target.name);
       const url = 'search.php?s=';
       if (headerTitle.title === 'Drinks') {
-        const callApi = await callApiDrinks(url);
+        const callApi = await requestDrinksApi(url);
         return setapiDrinks(callApi);
       } if (headerTitle.title === 'Foods') {
-        const callApi = await callApiFoods(url);
+        const callApi = await requestFoodApi(url);
         return setapiFoods(callApi);
       }
     }
     if (headerTitle.title === 'Drinks') {
       const url = `filter.php?c=${event.target.name}`;
-      const callApi = await callApiDrinks(url);
+      const callApi = await requestDrinksApi(url);
       settoogleButton(event.target.name);
       return setapiDrinks(callApi);
     }
     if (headerTitle.title === 'Foods') {
       const url = `filter.php?c=${event.target.name}`;
-      const callApi = await callApiFoods(url);
+      const callApi = await requestFoodApi(url);
       settoogleButton(event.target.name);
       return setapiFoods(callApi);
     }
@@ -68,6 +59,8 @@ function GlobalProvider({ children }) {
     apiDrinksCategory,
     apiFoodsCategory,
     filterHandleClick,
+    setapiDrinks,
+    setapiFoods,
   };
 
   // monta array de foods e drinks
