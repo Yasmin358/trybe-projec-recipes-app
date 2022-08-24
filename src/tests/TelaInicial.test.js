@@ -1,4 +1,4 @@
-import { screen } from '@testing-library/react';
+import { screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import React from 'react';
 import Foods from '../pages/Foods';
@@ -41,9 +41,9 @@ function mockFetch () {
 describe('Testa a página Login', () => {
   test('Testa se é renderizada a pagina de comidas', async () => {
     mockFetch()    
-    await act(async() => {
-    renderWithRouter(<GlobalProvider><App /></GlobalProvider>);
-    })
+    // await act(async() => {
+    // })
+    await (waitFor(() => renderWithRouter(<GlobalProvider><App /></GlobalProvider>) ))
     const loginInput = screen.getByRole('textbox', { name: /email:/i })
     const loginPass = screen.getByTestId('password-input')
     const loginBtn = screen.getByRole('button', { name: /login/i })
@@ -63,6 +63,9 @@ describe('Testa a página Login', () => {
     const imgCorba = screen.getByRole('img', { name: /corba/i })
     expect(imgCorba).toBeInTheDocument()
     userEvent.click(imgCorba)
+    await act(async() => {
+    renderWithRouter(<GlobalProvider><App /></GlobalProvider>);
+    })
 
   });
   
