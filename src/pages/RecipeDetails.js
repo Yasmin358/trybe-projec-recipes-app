@@ -1,9 +1,12 @@
 import React, { useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
 import { Link } from 'react-router-dom';
+import clipboardCopy from 'clipboard-copy';
 import DetailsCard from '../components/DetailsCard';
 import RecomendationCard from '../components/RecomendationCard';
 import { objectFilter } from '../helperFuncions';
+import shareIcon from '../images/shareIcon.svg';
+import favIcon from '../images/whiteHeartIcon.svg';
 
 function RecipeDetails(props) {
   const { match: { params: { id } }, history } = props;
@@ -46,24 +49,54 @@ function RecipeDetails(props) {
     return 'Start Recipe';
   };
 
-  console.log(route, id);
+  const handleShareBtn = () => {
+    const ONE_HALF_SEC = 1500;
+    clipboardCopy(document.URL);
+    document.querySelector('.link-copied').classList.toggle('hidden');
+    setTimeout(() => {
+      document.querySelector('.link-copied').classList.toggle('hidden');
+    }, ONE_HALF_SEC);
+  };
+
+  const handleFavBtn = () => {
+    console.log(recipe);
+    const { strArea, strCategory, strMeal,
+      strDrink, strMealThumb, strDrinkThumb, strAlcoholic } = recipe;
+    const data = [{
+      id,
+      type: route.slice(route.at(-1), route.length - 1),
+      nationality: strArea || '',
+      category: strCategory,
+      alcoholicOrNot: strAlcoholic || '',
+      name: strMeal || strDrink,
+      image: strMealThumb || strDrinkThumb,
+    }];
+    const oldFavs = localStorage.getItem('favoriteRecipes');
+    if (!oldFavs) return localStorage.setItem('favoriteRecipes', JSON.stringify(data));
+
+    const newFavs = [...JSON.parse(oldFavs), ...data];
+    localStorage.setItem('favoriteRecipes', JSON.stringify(newFavs));
+  };
 
   return (
     recipe
     && (
       <>
         <DetailsCard { ...recipe } />
+        <p className="hidden link-copied">Link copied!</p>
         <button
           type="button"
           data-testid="share-btn"
+          onClick={ handleShareBtn }
         >
-          Compartilhar
+          <img src={ shareIcon } alt="share icon" />
         </button>
         <button
           type="button"
           data-testid="favorite-btn"
+          onClick={ handleFavBtn }
         >
-          Favoritar
+          <img src={ favIcon } alt="share icon" />
         </button>
         <RecomendationCard />
         <Link to={ `/${route}/${id}/in-progress` }>
