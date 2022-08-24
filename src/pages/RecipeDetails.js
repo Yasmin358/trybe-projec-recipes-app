@@ -6,7 +6,8 @@ import DetailsCard from '../components/DetailsCard';
 import RecomendationCard from '../components/RecomendationCard';
 import { objectFilter } from '../helperFuncions';
 import shareIcon from '../images/shareIcon.svg';
-import favIcon from '../images/whiteHeartIcon.svg';
+import favIconWhite from '../images/whiteHeartIcon.svg';
+import favIconBlack from '../images/blackHeartIcon.svg';
 
 function RecipeDetails(props) {
   const { match: { params: { id } }, history } = props;
@@ -18,6 +19,7 @@ function RecipeDetails(props) {
   }db.com/api/json/v1/1/lookup.php?i=${id}`;
 
   const [recipe, setRecipe] = useState('');
+  const [favorite, setFavorite] = useState(false);
 
   // Chamada da API realizada na montagem deste componente:
   // TODO: Ajustar este fetch depois da atualizalação dos requisitos anteriores
@@ -29,9 +31,57 @@ function RecipeDetails(props) {
         setRecipe(data[`${route === 'foods' ? 'meals' : 'drinks'}`].at(0));
       })
       .catch((err) => console.error(`SOMETHING WENT WRONG 💣💣💣: ${err}`));
-
-    // Para atualizar o texto do botão:
   }, [url, route, id]);
+
+  const checkIfRecipeIsFav = () => {
+    const oldFavs = localStorage.getItem('favoriteRecipes');
+    if (!oldFavs) {
+      setFavorite(false);
+      return false;
+    }
+    const match = JSON.parse(oldFavs).find((el) => Number(el.id) === Number(id));
+    if (match) {
+      setFavorite(true);
+      return true;
+    }
+    setFavorite(false);
+    return false;
+  };
+
+  const handleFavBtn = () => {
+    const isFavorite = checkIfRecipeIsFav();
+    if (isFavorite) {
+      const favs = JSON.parse(localStorage.getItem('favoriteRecipes'));
+      const newFavs = favs.filter((el) => el.id !== id);
+      localStorage.setItem('favoriteRecipes', newFavs);
+      return setFavorite(false);
+    }
+
+    const MINUS_ONE = -1;
+    const { strArea, strCategory, strMeal,
+      strDrink, strMealThumb, strDrinkThumb, strAlcoholic } = recipe;
+    const data = [{
+      id,
+      type: route.slice(route.at(MINUS_ONE), route.length - 1),
+      nationality: strArea || '',
+      category: strCategory,
+      alcoholicOrNot: strAlcoholic || '',
+      name: strMeal || strDrink,
+      image: strMealThumb || strDrinkThumb,
+    }];
+    const oldFavs = localStorage.getItem('favoriteRecipes');
+    if (!oldFavs) {
+      localStorage.setItem('favoriteRecipes', JSON.stringify(data));
+      return setFavorite(true);
+    }
+    const yetAnotherFavs = [...JSON.parse(oldFavs), ...data];
+    localStorage.setItem('favoriteRecipes', JSON.stringify(yetAnotherFavs));
+    setFavorite(true);
+  };
+
+  useEffect(() => {
+    checkIfRecipeIsFav();
+  }, [recipe]);
 
   const toogleStartButn = () => {
     const done = localStorage.getItem('doneRecipes');
@@ -58,26 +108,6 @@ function RecipeDetails(props) {
     }, ONE_HALF_SEC);
   };
 
-  const handleFavBtn = () => {
-    console.log(recipe);
-    const { strArea, strCategory, strMeal,
-      strDrink, strMealThumb, strDrinkThumb, strAlcoholic } = recipe;
-    const data = [{
-      id,
-      type: route.slice(route.at(-1), route.length - 1),
-      nationality: strArea || '',
-      category: strCategory,
-      alcoholicOrNot: strAlcoholic || '',
-      name: strMeal || strDrink,
-      image: strMealThumb || strDrinkThumb,
-    }];
-    const oldFavs = localStorage.getItem('favoriteRecipes');
-    if (!oldFavs) return localStorage.setItem('favoriteRecipes', JSON.stringify(data));
-
-    const newFavs = [...JSON.parse(oldFavs), ...data];
-    localStorage.setItem('favoriteRecipes', JSON.stringify(newFavs));
-  };
-
   return (
     recipe
     && (
@@ -95,8 +125,9 @@ function RecipeDetails(props) {
           type="button"
           data-testid="favorite-btn"
           onClick={ handleFavBtn }
+          src={ favorite ? favIconBlack : favIconWhite } // Por causa do CYPRESS!!
         >
-          <img src={ favIcon } alt="share icon" />
+          <img src={ favorite ? favIconBlack : favIconWhite } alt="share icon" />
         </button>
         <RecomendationCard />
         <Link to={ `/${route}/${id}/in-progress` }>
