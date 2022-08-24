@@ -5,11 +5,53 @@ import { drinks, foods } from '../services/themealdb';
 
 function GlobalProvider({ children }) {
   const [headerTitle, setheaderTitle] = useState({ title: '', search: true });
+  const [recipesAPIReturn, setRecipesAPIReturn] = useState([]);
   const [apiDrinks, setapiDrinks] = useState([]);
   const [apiFoods, setapiFoods] = useState([]);
   const [apiDrinksCategory, setdrinksCategory] = useState([]);
   const [apiFoodsCategory, setfoodsCategory] = useState([]);
   const [toogleButton, settoogleButton] = useState('');
+
+  const filterHandleClick = async (event) => {
+    event.preventDefault();
+    const button = toogleButton;
+    if (event.target.name === 'All' || event.target.name === button) {
+      settoogleButton(event.target.name);
+      const url = 'search.php?s=';
+      if (headerTitle.title === 'Drinks') {
+        const callApi = await callApiDrinks(url);
+        return setapiDrinks(callApi);
+      } if (headerTitle.title === 'Foods') {
+        const callApi = await callApiFoods(url);
+        return setapiFoods(callApi);
+      }
+    }
+    if (headerTitle.title === 'Drinks') {
+      const url = `filter.php?c=${event.target.name}`;
+      console.log('teste');
+      const callApi = await callApiDrinks(url);
+      settoogleButton(event.target.name);
+      return setapiDrinks(callApi);
+    }
+    if (headerTitle.title === 'Foods') {
+      const url = `filter.php?c=${event.target.name}`;
+      const callApi = await callApiFoods(url);
+      settoogleButton(event.target.name);
+      return setapiFoods(callApi);
+    }
+  };
+
+  const store = {
+    recipesAPIReturn,
+    setRecipesAPIReturn,
+    headerTitle,
+    setheaderTitle,
+    apiDrinks,
+    apiFoods,
+    apiDrinksCategory,
+    apiFoodsCategory,
+    filterHandleClick,
+  };
 
   async function requestFoodApi(endpoint) {
     const responseFoods = await foods(endpoint);
@@ -54,46 +96,9 @@ function GlobalProvider({ children }) {
     return apiResponse;
   };
 
-  const filterHandleClick = async (event) => {
-    event.preventDefault();
-    const button = toogleButton;
-    if (event.target.name === 'All' || event.target.name === button) {
-      settoogleButton(event.target.name);
-      const url = 'search.php?s=';
-      if (headerTitle.title === 'Drinks') {
-        const callApi = await callApiDrinks(url);
-        return setapiDrinks(callApi);
-      } if (headerTitle.title === 'Foods') {
-        const callApi = await callApiFoods(url);
-        return setapiFoods(callApi);
-      }
-    }
-    if (headerTitle.title === 'Drinks') {
-      const url = `filter.php?c=${event.target.name}`;
-      console.log('teste');
-      const callApi = await callApiDrinks(url);
-      settoogleButton(event.target.name);
-      return setapiDrinks(callApi);
-    }
-    if (headerTitle.title === 'Foods') {
-      const url = `filter.php?c=${event.target.name}`;
-      const callApi = await callApiFoods(url);
-      settoogleButton(event.target.name);
-      return setapiFoods(callApi);
-    }
-  };
-
   return (
     <GlobalContext.Provider
-      value={ {
-        headerTitle,
-        setheaderTitle,
-        apiDrinks,
-        apiFoods,
-        apiDrinksCategory,
-        apiFoodsCategory,
-        filterHandleClick,
-      } }
+      value={ store }
     >
       {children}
     </GlobalContext.Provider>
