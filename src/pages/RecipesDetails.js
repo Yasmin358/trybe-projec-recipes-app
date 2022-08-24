@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
 import DetailsCard from '../components/DetailsCard';
 import RecomendationCard from '../components/RecomendationCard';
+import { objectFilter } from '../helperFuncions';
 
 function RecipesDetails(props) {
   const { match: { params: { id } }, history } = props;
@@ -13,17 +14,27 @@ function RecipesDetails(props) {
   }db.com/api/json/v1/1/lookup.php?i=${id}`;
 
   const [recipe, setRecipe] = useState('');
+  const [btnText, setBtnText] = useState('');
 
   // Chamada da API realizada na montagem deste componente:
   // TODO: Ajustar este fetch depois da atualizalação dos requisitos anteriores
   useEffect(() => {
+    // Para carregar os detalhes da receita:
     fetch(url)
       .then((res) => res.json())
       .then((data) => {
         setRecipe(data[`${route === 'foods' ? 'meals' : 'drinks'}`].at(0));
       })
       .catch((err) => console.error(`SOMETHING WENT WRONG 💣💣💣: ${err}`));
-  }, [url, route]);
+
+    // Para atualizar o texto do botão:
+    const inProgress = JSON.parse(localStorage.getItem('inProgressRecipes'));
+    const idsObj = { ...inProgress?.cocktails, ...inProgress?.meals };
+    if (!idsObj) return setBtnText('Start Recipe');
+    const match = objectFilter(idsObj, (key) => key === id);
+    if (match) return setBtnText('Continue Recipe');
+    setBtnText('Start Recipe');
+  }, [url, route, id]);
 
   const toogleStartButn = () => {
     const done = localStorage.getItem('doneRecipes');
@@ -43,7 +54,7 @@ function RecipesDetails(props) {
           className={ `${toogleStartButn()} btn btn--start` }
           data-testid="start-recipe-btn"
         >
-          Start Recipe
+          { btnText }
         </button>
       </>
     )
@@ -59,41 +70,14 @@ export default RecipesDetails;
 
 // Para testes:
 /*
-localStorage.setItem('doneRecipes', JSON.stringify(
-  [{
-    id: 52771,
-    type: 'comida-ou-bebida',
-    nationality: 'nacionalidade-da-receita-ou-texto-vazio',
-    category: 'categoria-da-receita-ou-texto-vazio',
-    alcoholicOrNot: 'alcoholic-ou-non-alcoholic-ou-texto-vazio',
-    name: 'nome-da-receita',
-    image: 'imagem-da-receita',
-    doneDate: 'quando-a-receita-foi-concluida',
-    tags: 'array-de-tags-da-receita-ou-array-vazio',
-  },
-  {
-    id: 52773,
-    type: 'comida-ou-bebida',
-    nationality: 'nacionalidade-da-receita-ou-texto-vazio',
-    category: 'categoria-da-receita-ou-texto-vazio',
-    alcoholicOrNot: 'alcoholic-ou-non-alcoholic-ou-texto-vazio',
-    name: 'nome-da-receita',
-    image: 'imagem-da-receita',
-    doneDate: 'quando-a-receita-foi-concluida',
-    tags: 'array-de-tags-da-receita-ou-array-vazio',
-  },
-  {
-    id: 52772,
-    type: 'comida-ou-bebida',
-    nationality: 'nacionalidade-da-receita-ou-texto-vazio',
-    category: 'categoria-da-receita-ou-texto-vazio',
-    alcoholicOrNot: 'alcoholic-ou-non-alcoholic-ou-texto-vazio',
-    name: 'nome-da-receita',
-    image: 'imagem-da-receita',
-    doneDate: 'quando-a-receita-foi-concluida',
-    tags: 'array-de-tags-da-receita-ou-array-vazio',
-  },
-
-  ],
-));
+{
+    cocktails: {
+        id-da-bebida: [lista-de-ingredientes-utilizados],
+        ...
+    },
+    meals: {
+        id-da-comida: [lista-de-ingredientes-utilizados],
+        ...
+    }
+}
 */
