@@ -23,6 +23,13 @@ function RecipesDetails(props) {
       .catch((err) => console.error(`SOMETHING WENT WRONG 💣💣💣: ${err}`));
   }, [url, route]);
 
+  const toogleStartButn = () => {
+    const done = localStorage.getItem('doneRecipes');
+    const match = JSON.parse(done)?.find((el) => Number(el.id) === Number(id));
+    if (match) return 'hidden';
+    return '';
+  };
+
   return (
     recipe
     && (
@@ -31,8 +38,8 @@ function RecipesDetails(props) {
         <RecomendationCard />
         <button
           type="button"
+          className={ `${toogleStartButn()} btn btn--start` }
           data-testid="start-recipe-btn"
-          className="btn btn--start"
         >
           Start Recipe
 
@@ -48,3 +55,44 @@ RecipesDetails.propTypes = {
 };
 
 export default RecipesDetails;
+
+// Para testes:
+/*
+localStorage.setItem('doneRecipes', JSON.stringify(
+  [{
+    id: 52771,
+    type: 'comida-ou-bebida',
+    nationality: 'nacionalidade-da-receita-ou-texto-vazio',
+    category: 'categoria-da-receita-ou-texto-vazio',
+    alcoholicOrNot: 'alcoholic-ou-non-alcoholic-ou-texto-vazio',
+    name: 'nome-da-receita',
+    image: 'imagem-da-receita',
+    doneDate: 'quando-a-receita-foi-concluida',
+    tags: 'array-de-tags-da-receita-ou-array-vazio',
+  },
+  {
+    id: 52773,
+    type: 'comida-ou-bebida',
+    nationality: 'nacionalidade-da-receita-ou-texto-vazio',
+    category: 'categoria-da-receita-ou-texto-vazio',
+    alcoholicOrNot: 'alcoholic-ou-non-alcoholic-ou-texto-vazio',
+    name: 'nome-da-receita',
+    image: 'imagem-da-receita',
+    doneDate: 'quando-a-receita-foi-concluida',
+    tags: 'array-de-tags-da-receita-ou-array-vazio',
+  },
+  {
+    id: 52772,
+    type: 'comida-ou-bebida',
+    nationality: 'nacionalidade-da-receita-ou-texto-vazio',
+    category: 'categoria-da-receita-ou-texto-vazio',
+    alcoholicOrNot: 'alcoholic-ou-non-alcoholic-ou-texto-vazio',
+    name: 'nome-da-receita',
+    image: 'imagem-da-receita',
+    doneDate: 'quando-a-receita-foi-concluida',
+    tags: 'array-de-tags-da-receita-ou-array-vazio',
+  },
+
+  ],
+));
+*/
