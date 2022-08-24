@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
+import { Link } from 'react-router-dom';
 import DetailsCard from '../components/DetailsCard';
 import RecomendationCard from '../components/RecomendationCard';
 import { objectFilter } from '../helperFuncions';
@@ -45,19 +46,23 @@ function RecipeDetails(props) {
     return 'Start Recipe';
   };
 
+  console.log(route, id);
+
   return (
     recipe
     && (
       <>
         <DetailsCard { ...recipe } />
         <RecomendationCard />
-        <button
-          type="button"
-          className={ `${toogleStartButn()} btn btn--start` }
-          data-testid="start-recipe-btn"
-        >
-          { renderBtnText() }
-        </button>
+        <Link to={ `/${route}/${id}/in-progress` }>
+          <button
+            type="button"
+            className={ `${toogleStartButn()} btn btn--start` }
+            data-testid="start-recipe-btn"
+          >
+            { renderBtnText() }
+          </button>
+        </Link>
       </>
     )
   );
