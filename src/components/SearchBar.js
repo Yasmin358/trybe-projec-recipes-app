@@ -27,7 +27,7 @@ function SearchBar() {
   const foodFunction = async () => {
     const { radios, SearchInput } = filter;
 
-    if (radios === 'firstLetter' && SearchInput.length > 1) {
+    if (radios === 'firstLetter' && (SearchInput.length > 1 || !SearchInput.trim())) {
       return global.alert('Your search must have only 1 (one) character');
     }
     switch (radios) {
@@ -41,14 +41,15 @@ function SearchBar() {
       setRecipesAPIReturn(await foodsFilterFirstLetter(SearchInput));
       break;
     default:
-      return radios;
+      return global
+        .alert('Your search must choose a filter (ingredients, name or first letter)');
     }
   };
 
   const drinkFunction = async () => {
     const { radios, SearchInput } = filter;
 
-    if (radios === 'firstLetter' && SearchInput.length > 1) {
+    if (radios === 'firstLetter' && (SearchInput.length > 1 || !SearchInput.trim())) {
       return global.alert('Your search must have only 1 (one) character');
     }
     switch (radios) {
@@ -62,7 +63,8 @@ function SearchBar() {
       setRecipesAPIReturn(await drinkFilterFirstLetter(SearchInput));
       break;
     default:
-      return radios;
+      return global
+        .alert('Your search must choose a filter (ingredients, name or first letter)');
     }
   };
 
