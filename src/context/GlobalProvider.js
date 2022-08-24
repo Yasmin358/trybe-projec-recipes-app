@@ -12,6 +12,15 @@ function GlobalProvider({ children }) {
   const [apiFoodsCategory, setfoodsCategory] = useState([]);
   const [toogleButton, settoogleButton] = useState('');
 
+  async function requestFoodApi(endpoint) {
+    const responseFoods = await foods(endpoint);
+    return responseFoods;
+  }
+  async function requestDrinksApi(endpoint) {
+    const responseDrinks = await drinks(endpoint);
+    return responseDrinks;
+  }
+
   const callApiDrinks = async (url) => {
     const apiResponse = await drinks(url);
     return apiResponse;
@@ -20,6 +29,7 @@ function GlobalProvider({ children }) {
     const apiResponse = await foods(url);
     return apiResponse;
   };
+
   const filterHandleClick = async (event) => {
     event.preventDefault();
     const button = toogleButton;
@@ -36,7 +46,6 @@ function GlobalProvider({ children }) {
     }
     if (headerTitle.title === 'Drinks') {
       const url = `filter.php?c=${event.target.name}`;
-      console.log('teste');
       const callApi = await callApiDrinks(url);
       settoogleButton(event.target.name);
       return setapiDrinks(callApi);
@@ -60,15 +69,6 @@ function GlobalProvider({ children }) {
     apiFoodsCategory,
     filterHandleClick,
   };
-
-  async function requestFoodApi(endpoint) {
-    const responseFoods = await foods(endpoint);
-    return responseFoods;
-  }
-  async function requestDrinksApi(endpoint) {
-    const responseDrinks = await drinks(endpoint);
-    return responseDrinks;
-  }
 
   // monta array de foods e drinks
   useEffect(() => {
@@ -95,9 +95,7 @@ function GlobalProvider({ children }) {
   }, []);
 
   return (
-    <GlobalContext.Provider
-      value={ store }
-    >
+    <GlobalContext.Provider value={ store }>
       {children}
     </GlobalContext.Provider>
   );
