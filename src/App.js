@@ -7,7 +7,7 @@ import Login from './pages/Login';
 import Foods from './pages/Foods';
 import Profile from './pages/Profile';
 import Drinks from './pages/Drinks';
-import RecipesDetails from './pages/RecipesDetails';
+import RecipeDetails from './pages/RecipeDetails';
 // import DrinksRecipes from './pages/DrinksRecipes';
 import DoneRecipes from './pages/DoneRecipes';
 import FavoriteRecipes from './pages/FavoriteRecipes';
@@ -29,8 +29,8 @@ function App() {
             </>) }
         />
         {/* Os detalhes de bebidas e comidas são renderizados no mesmo componente (req. 24) */}
-        <Route path="/foods/:id" component={ RecipesDetails } />
-        <Route path="/foods/:id/in-progress" component={ RecipesDetails } />
+        <Route path="/foods/:id" component={ RecipeDetails } />
+        <Route path="/foods/:id/in-progress" component={ RecipeDetails } />
 
         <Route
           path="/profile"
@@ -51,8 +51,8 @@ function App() {
             </>) }
         />
         {/* Os detalhes de bebidas e comidas são renderizados no mesmo componente (req. 24) */}
-        <Route path="/drinks/:id" component={ RecipesDetails } />
-        <Route path="/drinks/:id/in-progress" component={ RecipesDetails } />
+        <Route path="/drinks/:id" component={ RecipeDetails } />
+        <Route path="/drinks/:id/in-progress" component={ RecipeDetails } />
 
         <Route path="/done-recipes" component={ DoneRecipes } />
 

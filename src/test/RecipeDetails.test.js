@@ -2,7 +2,7 @@ import { render } from '@testing-library/react';
 import React from 'react';
 import { BrowserRouter } from 'react-router-dom';
 import { act } from 'react-dom/test-utils';
-import RecipesDetails from '../pages/RecipesDetails';
+import RecipeDetails from '../pages/RecipeDetails';
 import GlobalContext from '../context/GlobalContext';
 
 const store = {
@@ -104,7 +104,7 @@ const renderRecipesDetailsPage = () => act(() => {
   render(
     <GlobalContext.Provider value={ store }>
       <BrowserRouter>
-        <RecipesDetails
+        <RecipeDetails
           {
             ...{ match: { params: { id: '52772' } },
               history: { location: { pathname: '/foods/52772' } } }
