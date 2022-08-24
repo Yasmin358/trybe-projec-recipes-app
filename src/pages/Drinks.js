@@ -17,7 +17,6 @@ function Drinks() {
     setheaderTitle({ title: 'Drinks', search: true });
   }, [setheaderTitle]);
 
-  console.log(apiDrinks);
   return (
     <>
       <Header />
@@ -30,7 +29,6 @@ function Drinks() {
             onClick={ filterHandleClick }
           >
             All
-
           </button>
           {apiDrinksCategory.map((category, index) => (
             index < maxCategorys

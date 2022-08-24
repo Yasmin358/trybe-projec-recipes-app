@@ -57,7 +57,6 @@ function GlobalProvider({ children }) {
   const filterHandleClick = async (event) => {
     event.preventDefault();
     const button = toogleButton;
-    console.log(button);
     if (event.target.name === 'All' || event.target.name === button) {
       settoogleButton(event.target.name);
       const url = 'search.php?s=';
@@ -69,13 +68,15 @@ function GlobalProvider({ children }) {
         return setapiFoods(callApi);
       }
     }
-    const url = `filter.php?c=${event.target.name}`;
     if (headerTitle.title === 'Drinks') {
+      const url = `filter.php?c=${event.target.name}`;
+      console.log('teste');
       const callApi = await callApiDrinks(url);
       settoogleButton(event.target.name);
       return setapiDrinks(callApi);
     }
     if (headerTitle.title === 'Foods') {
+      const url = `filter.php?c=${event.target.name}`;
       const callApi = await callApiFoods(url);
       settoogleButton(event.target.name);
       return setapiFoods(callApi);

@@ -20,7 +20,6 @@ function App() {
     <Switch>
       <GlobalProvider>
         <Route exact path="/" component={ Login } />
-
         <Route
           exact
           path="/foods"
@@ -32,7 +31,6 @@ function App() {
         />
         <Route path="/foods/:id" component={ Recipes } />
         <Route path="/foods/:id/in-progress" component={ Recipes } />
-
         <Route
           path="/profile"
           render={ (props) => (

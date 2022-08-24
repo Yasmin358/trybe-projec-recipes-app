@@ -17,8 +17,6 @@ function Foods() {
     setheaderTitle({ title: 'Foods', search: true });
   }, [setheaderTitle]);
 
-  console.log(apiFoods);
-
   return (
     <>
       <Header />
