@@ -12,6 +12,14 @@ function GlobalProvider({ children }) {
   const [apiFoodsCategory, setfoodsCategory] = useState([]);
   const [toogleButton, settoogleButton] = useState('');
 
+  const callApiDrinks = async (url) => {
+    const apiResponse = await drinks(url);
+    return apiResponse;
+  };
+  const callApiFoods = async (url) => {
+    const apiResponse = await foods(url);
+    return apiResponse;
+  };
   const filterHandleClick = async (event) => {
     event.preventDefault();
     const button = toogleButton;
@@ -85,16 +93,6 @@ function GlobalProvider({ children }) {
     }
     fetch();
   }, []);
-
-  const callApiFoods = async (url) => {
-    const apiResponse = await foods(url);
-    return apiResponse;
-  };
-
-  const callApiDrinks = async (url) => {
-    const apiResponse = await drinks(url);
-    return apiResponse;
-  };
 
   return (
     <GlobalContext.Provider
