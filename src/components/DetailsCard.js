@@ -6,6 +6,7 @@ function DetailsCard(props) {
   const recipe = { ...props };
   const { strDrinkThumb, strMealThumb, strCategory, strAlcoholic,
     strDrink, strMeal, strInstructions, strYoutube } = recipe;
+  console.log(recipe);
 
   const ingredients = objectFilter(recipe,
     (key, value) => key.includes('strIngredient') && value);

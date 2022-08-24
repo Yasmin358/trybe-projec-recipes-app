@@ -22,10 +22,8 @@ function RecomendationCard() {
 
   const renderCards = (recipesObj) => {
     const SIX = 6;
-    console.log(recipesObj);
     const recommends = [];
     recipesObj.forEach((rec, i) => { if (i < SIX) recommends.push(rec); });
-    console.log(recommends);
     const markup = (array) => array.map((el, i) => (
       <figure
         data-testid={ `${i}-recomendation-card` }
