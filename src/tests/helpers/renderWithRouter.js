@@ -1,13 +1,15 @@
 import React from 'react';
 import { createMemoryHistory } from 'history';
-import { Router } from 'react-router-dom';
+import { BrowserRouter, Router } from 'react-router-dom';
 import { render } from '@testing-library/react';
 
 function withRouter(component, history) {
-  return (
-    <Router history={ history }>
-      { component }
-    </Router>
+  return (   
+    <BrowserRouter>
+      <Router history={ history }>
+        { component }
+      </Router>
+    </BrowserRouter>  
   );
 }
 

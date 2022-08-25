@@ -10,13 +10,13 @@ import {
 } from '../services/themealdb';
 
 function SearchBar() {
+  const { setapiFoods, setapiDrinks, apiFoods, apiDrinks } = useContext(GlobalContext);
   const [filter, setFilter] = useState(
     {
       SearchInput: '',
       radios: '',
     },
   );
-  const { recipesAPIReturn, setRecipesAPIReturn } = useContext(GlobalContext);
 
   const handleInput = ({ target }) => {
     setFilter((oldState) => ({ ...oldState,
@@ -26,19 +26,22 @@ function SearchBar() {
 
   const foodFunction = async () => {
     const { radios, SearchInput } = filter;
-
+    let apiResponse = [];
     if (radios === 'firstLetter' && (SearchInput.length > 1 || !SearchInput.trim())) {
       return global.alert('Your search must have only 1 (one) character');
     }
     switch (radios) {
     case 'ingredientes':
-      setRecipesAPIReturn(await foodsFilterIngredients(SearchInput));
+      apiResponse = await foodsFilterIngredients(SearchInput);
+      if (apiResponse) { setapiFoods(apiResponse); } else { setapiFoods(apiFoods); }
       break;
     case 'name':
-      setRecipesAPIReturn(await foodsFilterNome(SearchInput));
+      apiResponse = await foodsFilterNome(SearchInput);
+      if (apiResponse) { setapiFoods(apiResponse); } else { setapiFoods(apiFoods); }
       break;
     case 'firstLetter':
-      setRecipesAPIReturn(await foodsFilterFirstLetter(SearchInput));
+      apiResponse = await foodsFilterFirstLetter(SearchInput);
+      if (apiResponse) { setapiFoods(apiResponse); } else { setapiFoods(apiFoods); }
       break;
     default:
       return global
@@ -48,19 +51,22 @@ function SearchBar() {
 
   const drinkFunction = async () => {
     const { radios, SearchInput } = filter;
-
+    let apiResponse = [];
     if (radios === 'firstLetter' && (SearchInput.length > 1 || !SearchInput.trim())) {
       return global.alert('Your search must have only 1 (one) character');
     }
     switch (radios) {
     case 'ingredientes':
-      setRecipesAPIReturn(await drinkFilterIngredients(SearchInput));
+      apiResponse = await drinkFilterIngredients(SearchInput);
+      if (apiResponse) { setapiDrinks(apiResponse); } else { setapiDrinks(apiDrinks); }
       break;
     case 'name':
-      setRecipesAPIReturn(await drinkFilterNome(SearchInput));
+      apiResponse = await drinkFilterNome(SearchInput);
+      if (apiResponse) { setapiDrinks(apiResponse); } else { setapiDrinks(apiDrinks); }
       break;
     case 'firstLetter':
-      setRecipesAPIReturn(await drinkFilterFirstLetter(SearchInput));
+      apiResponse = await drinkFilterFirstLetter(SearchInput);
+      if (apiResponse) { setapiDrinks(apiResponse); } else { setapiDrinks(apiDrinks); }
       break;
     default:
       return global
@@ -77,18 +83,19 @@ function SearchBar() {
   };
 
   useEffect(() => {
-    const { meals, drinks } = recipesAPIReturn;
+    const meals = apiFoods;
+    const drinks = apiDrinks;
     if (meals?.length === 1) {
-      document.location.pathname = `/foods/${recipesAPIReturn.meals[0].idMeal}`;
+      document.location.pathname = `/foods/${meals[0].idMeal}`;
     }
     if (drinks?.length === 1) {
-      document.location.pathname = `/drinks/${recipesAPIReturn.drinks[0].idDrink}`;
+      document.location.pathname = `/drinks/${drinks[0].idDrink}`;
     }
-  }, [recipesAPIReturn]);
+  }, [apiFoods, apiDrinks]);
 
   const { SearchInput } = filter;
   return (
-    <form onSubmit={ handleSubmit }>
+    <form>
       <input
         name="SearchInput"
         type="text"
@@ -131,8 +138,9 @@ function SearchBar() {
         />
       </label>
       <button
-        type="submit"
+        type="button"
         data-testid="exec-search-btn"
+        onClick={ handleSubmit }
       >
         Pesquisar
       </button>
