@@ -9,6 +9,37 @@ import shareIcon from '../images/shareIcon.svg';
 import favIconWhite from '../images/whiteHeartIcon.svg';
 import favIconBlack from '../images/blackHeartIcon.svg';
 
+const checkIfRecipeIsFav = (setFavoriteFunc, id) => {
+  const oldFavs = localStorage.getItem('favoriteRecipes');
+  if (!oldFavs) {
+    setFavoriteFunc(false);
+    return false;
+  }
+  const match = JSON.parse(oldFavs).find((el) => Number(el.id) === Number(id));
+  if (match) {
+    setFavoriteFunc(true);
+    return true;
+  }
+  setFavoriteFunc(false);
+  return false;
+};
+
+const toogleStartButn = (id) => {
+  const done = localStorage.getItem('doneRecipes');
+  const match = JSON.parse(done)?.find((el) => Number(el.id) === Number(id));
+  if (match) return 'hidden';
+  return '';
+};
+
+const renderBtnText = (id) => {
+  const inProgress = JSON.parse(localStorage.getItem('inProgressRecipes'));
+  const idsObj = { ...inProgress?.cocktails, ...inProgress?.meals };
+  if (!idsObj) return 'Start Recipe';
+  const match = objectFilter(idsObj, (key) => key === id);
+  if (Object.entries(match).length > 0) return 'Continue Recipe';
+  return 'Start Recipe';
+};
+
 function RecipeDetails(props) {
   const { match: { params: { id } }, history } = props;
   const { pathname } = history.location; //   /foods/2344323 ['/', 'foods']
@@ -33,23 +64,8 @@ function RecipeDetails(props) {
       .catch((err) => console.error(`SOMETHING WENT WRONG 💣💣💣: ${err}`));
   }, [url, route, id]);
 
-  const checkIfRecipeIsFav = () => {
-    const oldFavs = localStorage.getItem('favoriteRecipes');
-    if (!oldFavs) {
-      setFavorite(false);
-      return false;
-    }
-    const match = JSON.parse(oldFavs).find((el) => Number(el.id) === Number(id));
-    if (match) {
-      setFavorite(true);
-      return true;
-    }
-    setFavorite(false);
-    return false;
-  };
-
   const handleFavBtn = () => {
-    const isFavorite = checkIfRecipeIsFav();
+    const isFavorite = checkIfRecipeIsFav(setFavorite, id);
     if (isFavorite) {
       const favs = JSON.parse(localStorage.getItem('favoriteRecipes'));
       const newFavs = favs.filter((el) => el.id !== id);
@@ -80,24 +96,8 @@ function RecipeDetails(props) {
   };
 
   useEffect(() => {
-    checkIfRecipeIsFav();
+    checkIfRecipeIsFav(setFavorite, id);
   }, [recipe]);
-
-  const toogleStartButn = () => {
-    const done = localStorage.getItem('doneRecipes');
-    const match = JSON.parse(done)?.find((el) => Number(el.id) === Number(id));
-    if (match) return 'hidden';
-    return '';
-  };
-
-  const renderBtnText = () => {
-    const inProgress = JSON.parse(localStorage.getItem('inProgressRecipes'));
-    const idsObj = { ...inProgress?.cocktails, ...inProgress?.meals };
-    if (!idsObj) return 'Start Recipe';
-    const match = objectFilter(idsObj, (key) => key === id);
-    if (Object.entries(match).length > 0) return 'Continue Recipe';
-    return 'Start Recipe';
-  };
 
   const handleShareBtn = () => {
     const ONE_HALF_SEC = 1500;
@@ -133,10 +133,10 @@ function RecipeDetails(props) {
         <Link to={ `/${route}/${id}/in-progress` }>
           <button
             type="button"
-            className={ `${toogleStartButn()} btn btn--start` }
+            className={ `${toogleStartButn(id)} btn btn--start` }
             data-testid="start-recipe-btn"
           >
-            { renderBtnText() }
+            { renderBtnText(id) }
           </button>
         </Link>
       </>
