@@ -26,6 +26,17 @@ function FavoriteRecipes() {
     setFavsUpdated((prev) => !prev);
   };
 
+  const handleFilterBtn = (type = false) => {
+    if (!type) {
+      return setCurrentFavs(getFavoritesFromLocalStorage());
+    }
+    const favs = getFavoritesFromLocalStorage();
+    const filteredFavs = favs.filter((el) => el.type === type);
+    console.log(filteredFavs);
+    if (filteredFavs.length > 0) return setCurrentFavs(filteredFavs);
+    setCurrentFavs(false);
+  };
+
   const { setheaderTitle } = useContext(GlobalContext);
   useEffect(() => {
     setheaderTitle({ title: 'Favorite Recipes', search: false });
@@ -41,18 +52,21 @@ function FavoriteRecipes() {
       <button
         type="button"
         data-testid="filter-by-all-btn"
+        onClick={ () => handleFilterBtn() }
       >
         All
       </button>
       <button
         type="button"
         data-testid="filter-by-food-btn"
+        onClick={ () => handleFilterBtn('food') }
       >
         Foods
       </button>
       <button
         type="button"
         data-testid="filter-by-drink-btn"
+        onClick={ () => handleFilterBtn('drink') }
       >
         Drink
       </button>
