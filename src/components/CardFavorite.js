@@ -1,6 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import clipboardCopy from 'clipboard-copy';
+import { Link } from 'react-router-dom';
 import shareIcon from '../images/shareIcon.svg';
 import favIconBlack from '../images/blackHeartIcon.svg';
 
@@ -22,12 +23,16 @@ function CardFavorite(props) {
   const renderFavoritesCards = (favs) => {
     const markup = (array) => array.map((el, index) => (
       <figure key={ el.id }>
-        <img
-          src={ el.image }
-          alt={ el.name }
-          data-testid={ `${index}-horizontal-image` }
-        />
-        <p data-testid={ `${index}-horizontal-name` }>{el.name}</p>
+        <Link to={ el.type === 'food' ? `/foods/${el.id}` : `/drinks/${el.id}` }>
+          <img
+            src={ el.image }
+            alt={ el.name }
+            data-testid={ `${index}-horizontal-image` }
+          />
+        </Link>
+        <Link to={ el.type === 'food' ? `/foods/${el.id}` : `/drinks/${el.id}` }>
+          <p data-testid={ `${index}-horizontal-name` }>{el.name}</p>
+        </Link>
         <p
           data-testid={ `${index}-horizontal-top-text` }
         >
