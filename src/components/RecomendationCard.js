@@ -27,7 +27,7 @@ function RecomendationCard() {
     const markup = (array) => array.map((el, i) => (
       <figure
         data-testid={ `${i}-recomendation-card` }
-        key={ el.idMeal || el.idDrinks }
+        key={ `${el.idMeal}${i}` || `${el.idDrinks}${i}` }
         className={ i > 1 ? 'hidden' : '' }
       >
         <img

@@ -1,4 +1,4 @@
-import { render } from '@testing-library/react';
+import { render, screen, waitFor } from '@testing-library/react';
 import React from 'react';
 import { BrowserRouter } from 'react-router-dom';
 import { act } from 'react-dom/test-utils';
@@ -100,14 +100,28 @@ const mockErrorFetch = () => {
   });
 };
 
-const renderRecipesDetailsPage = () => act(() => {
+const mockLocalStorage = (items = {}) => {
+  jest.spyOn(localStorage, 'getItem');
+  jest.spyOn(localStorage, 'setItem');
+  global.localStorage = {
+    items,
+    getItem(key) {
+      return global.localStorage.items[key];
+    },
+    setItem(key, value) {
+      global.localStorage.items[key] = value;
+    },
+  };
+};
+
+const renderRecipesDetailsPage = (id = '52772', pathname = '/foods/52772') => act(() => {
   render(
     <GlobalContext.Provider value={ store }>
       <BrowserRouter>
         <RecipeDetails
           {
-            ...{ match: { params: { id: '52772' } },
-              history: { location: { pathname: '/foods/52772' } } }
+            ...{ match: { params: { id } },
+              history: { location: { pathname } } }
           }
         />
       </BrowserRouter>
@@ -117,6 +131,10 @@ const renderRecipesDetailsPage = () => act(() => {
 
 describe('Tests for the RecipesDetails component', () => {
   // beforeEach(() => mockFetch());
+  afterEach(() => {
+    jest.clearAllMocks();
+    jest.clearAllTimers();
+  });
 
   it('checks if the page renders accordingly', () => {
     mockFetch();
@@ -128,5 +146,32 @@ describe('Tests for the RecipesDetails component', () => {
     mockErrorFetch();
     renderRecipesDetailsPage();
     expect(global.fetch).toHaveBeenCalled();
+  });
+
+  it('checks if a favorited drink is rendered with the black heart icon', async () => {
+    mockFetch();
+    mockLocalStorage({
+      favoriteRecipes: JSON.stringify([{
+        id: '178319',
+        type: 'drink',
+        nationality: '',
+        category: 'Cocktail',
+        alcoholicOrNot: 'Alcoholic',
+        name: 'Aquamarine',
+        image: 'https://www.thecocktaildb.com/images/media/drink/zvsre31572902738.jpg',
+      },
+      {
+        id: '52772',
+        type: 'food',
+        nationality: 'Japanese',
+        category: 'Chicken',
+        alcoholicOrNot: '',
+        name: 'Teriyaki Chicken Casserole',
+        image: 'https://www.themealdb.com/images/media/meals/wvpsxx1468256321.jpg',
+      },
+      ]) });
+    renderRecipesDetailsPage();
+    expect(global.fetch).toHaveBeenCalled();
+    await waitFor(() => expect(screen.getByTestId('favorite-btn')).toBeInTheDocument());
   });
 });
