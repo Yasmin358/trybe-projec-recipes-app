@@ -1,3 +1,14 @@
+/* UTILITY CLASSES */
+.hidden {
+  display: none;
+}
+
+/* RECIPES DETAILS */
+.btn--start {
+  bottom: 0;
+  position: fixed;
+}
+
 /* FOOTER */
 .footer {
   background-image: linear-gradient(to right bottom, #fbdb89, #f48982);
