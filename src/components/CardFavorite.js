@@ -19,7 +19,7 @@ function CardFavorite(props) {
         <p
           data-testid={ `${index}-horizontal-top-text` }
         >
-          {`${el.nationality} - ${el.category}`}
+          {el.alcoholicOrNot || `${el.nationality} - ${el.category}`}
 
         </p>
         <p>{el.nationality}</p>
