@@ -1,7 +1,20 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+import clipboardCopy from 'clipboard-copy';
 import shareIcon from '../images/shareIcon.svg';
 import favIconBlack from '../images/blackHeartIcon.svg';
+
+const handleShareBtn = (e) => {
+  const route = e.target.parentElement.dataset.details;
+  console.log(route);
+  const urlDetails = `http://localhost:3000${route}`;
+  const ONE_HALF_SEC = 1500;
+  clipboardCopy(urlDetails);
+  document.querySelector('.link-copied').classList.toggle('hidden');
+  setTimeout(() => {
+    document.querySelector('.link-copied').classList.toggle('hidden');
+  }, ONE_HALF_SEC);
+};
 
 function CardFavorite(props) {
   const { props: favArray } = props;
@@ -25,8 +38,10 @@ function CardFavorite(props) {
         <p>{el.nationality}</p>
         <button
           type="button"
+          data-details={ el.type === 'food' ? `/foods/${el.id}` : `/drinks/${el.id}` }
           data-testid={ `${index}-horizontal-share-btn` }
           src={ shareIcon } // POR CAUSA DO CYPRESS!
+          onClick={ handleShareBtn }
         >
           <img src={ shareIcon } alt="share icon" />
 
@@ -46,6 +61,7 @@ function CardFavorite(props) {
 
   return (
     <>
+      <p className="hidden link-copied">Link copied!</p>
       { renderFavoritesCards(favArray)}
     </>
   );
