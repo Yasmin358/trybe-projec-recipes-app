@@ -18,10 +18,10 @@ function Header() {
 
   return (
     <header className="header">
-      <h1 data-testid="page-title">{ headerTitle.title }</h1>
       <Link to="/profile">
         <img src={ profileIcon } alt="profileIcon" data-testid="profile-top-btn" />
       </Link>
+      <h1 data-testid="page-title">{ headerTitle.title }</h1>
       {headerTitle.search && (
         <button type="button" onClick={ handleSearch }>
           <img

@@ -2,6 +2,8 @@ import React from 'react';
 import { Switch, Route } from 'react-router-dom';
 import GlobalProvider from './context/GlobalProvider';
 import './App.css';
+import './styles/Header.css';
+import './styles/Main.css';
 // import 'bootstrap/dist/css/bootstrap.min.css';
 import Login from './pages/Login';
 import Foods from './pages/Foods';
@@ -19,7 +21,6 @@ function App() {
     <Switch>
       <GlobalProvider>
         <Route exact path="/" component={ Login } />
-
         <Route
           exact
           path="/foods"
