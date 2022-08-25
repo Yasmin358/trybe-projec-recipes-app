@@ -172,6 +172,10 @@ describe('Tests for the RecipesDetails component', () => {
       ]) });
     renderRecipesDetailsPage();
     expect(global.fetch).toHaveBeenCalled();
-    await waitFor(() => expect(screen.getByTestId('favorite-btn')).toBeInTheDocument());
+    await waitFor(() => { /* Criar algum spinner que desapareça ao ser atualizado
+    o estado local "favorite".
+    Definir aqui um expect(spinner).not.toBeInTheDocument() */ });
+
+    /* expect(img.src.includes("blackHeart")).toBe(true) */
   });
 });
