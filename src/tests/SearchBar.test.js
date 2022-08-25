@@ -6,6 +6,9 @@ import { act } from 'react-dom/test-utils';
 import GlobalContext from '../context/GlobalContext';
 import App from '../App';
 import MockMeal from '../services/MockMeal';
+import renderWithRouter from './helpers/renderWithRouter';
+import { drinks, foods, foodsCategory, drinksCategory} from './helpers/apiMock';
+import GlobalProvider from '../context/GlobalProvider';
 
 const searchTopBtn = 'search-top-btn';
 const searchInput = 'search-input';
@@ -17,11 +20,34 @@ const drinksBottomBtn = 'drinks-bottom-btn';
 const foodBottomBtn = 'food-bottom-btn';
 
 describe('Verifica a cobertura do componente SearchBar', () => {
-  const mockJest = () => {
-    jest.spyOn(global, 'fetch');
-    global.fetch.mockResolvedValue({
-      json: jest.fn().mockResolvedValue(MockMeal),
-    });
+  const mockJest = (url) => {
+    jest.spyOn(global, 'fetch').mockImplementation( async (url)=> {
+      if(url ==='https://www.themealdb.com/api/json/v1/1/search.php?s=') {        
+        return {
+          json: async () => foods
+        }
+      } if (url ==='https://www.themealdb.com/api/json/v1/1/list.php?c=list' ){
+        return {
+          json: async () => foodsCategory
+        }
+      } if ( url === 'https://www.thecocktaildb.com/api/json/v1/1/search.php?s='){
+        return {
+          json: async () => drinks
+        }
+      } if (url === 'https://www.thecocktaildb.com/api/json/v1/1/list.php?c=list'){
+        return {
+          json: async () => drinksCategory
+        }
+      } if(url === 'https://www.themealdb.com/api/json/v1/1/${endpoint}') {
+        return {
+          json: async () => foods
+        }
+      } else {
+        return {
+          json: async () => MockMeal
+        }
+      }
+    })
   };
   global.alert = jest.fn();
   afterEach(() => { jest.clearAllMocks(); cleanup(); });
@@ -39,7 +65,8 @@ describe('Verifica a cobertura do componente SearchBar', () => {
     apiFoods: [],
   };
   test('Testa a renderização do componente', async () => {
-    render(<BrowserRouter><App /></BrowserRouter>, '/');
+    const {history} = await  (waitFor (() => renderWithRouter(<App/>)))
+    expect(history.location.pathname).toBe('/')
     const emailInput = screen.getByTestId('email-input');
     const passwordInput = screen.getByTestId('password-input');
     const button = screen.getByTestId('login-submit-btn');
@@ -48,7 +75,7 @@ describe('Verifica a cobertura do componente SearchBar', () => {
     userEvent.type(emailInput, email);
     userEvent.type(passwordInput, password);
     userEvent.click(button);
-    expect(document.location.pathname).toBe('/foods');
+    expect(history.location.pathname).toBe('/foods');
     const searchButton = screen.getByTestId(searchTopBtn);
     userEvent.click(searchButton);
     const inputText = screen.getByTestId(searchInput);
@@ -64,7 +91,16 @@ describe('Verifica a cobertura do componente SearchBar', () => {
     cleanup();
   });
   test('Testa se a busca na API é feita corretamente pelo ingrediente', async () => {    
-    render(<GlobalContext.Provider><BrowserRouter><App /></BrowserRouter></GlobalContext.Provider>);
+    const {history} = await  (waitFor (() => renderWithRouter(<App/>)))
+    expect(history.location.pathname).toBe('/')
+    const emailInput = screen.getByTestId('email-input');
+    const passwordInput = screen.getByTestId('password-input');
+    const button = screen.getByTestId('login-submit-btn');
+    const email = 'email@pessoa.com';
+    const password = '1234567';
+    userEvent.type(emailInput, email);
+    userEvent.type(passwordInput, password);
+    userEvent.click(button);
     const searchButton = screen.getByTestId(searchTopBtn);
     userEvent.click(searchButton);
     const inputText = screen.getByTestId(searchInput);
@@ -79,7 +115,16 @@ describe('Verifica a cobertura do componente SearchBar', () => {
   });
 
   test('Testa a filtro dos radios buttons Food', async () => {
-    render(<BrowserRouter><App /></BrowserRouter>, '/');
+    const {history} = await  (waitFor (() => renderWithRouter(<App/>)))
+    expect(history.location.pathname).toBe('/')
+    const emailInput = screen.getByTestId('email-input');
+    const passwordInput = screen.getByTestId('password-input');
+    const button = screen.getByTestId('login-submit-btn');
+    const email = 'email@pessoa.com';
+    const password = '1234567';
+    userEvent.type(emailInput, email);
+    userEvent.type(passwordInput, password);
+    userEvent.click(button);
     const searchButton = screen.getByTestId(searchTopBtn);
     userEvent.click(searchButton);
     const inputText = screen.getByTestId(searchInput);
@@ -92,10 +137,19 @@ describe('Verifica a cobertura do componente SearchBar', () => {
     cleanup();
   });
   test('Testa a filtro dos radios buttons Drinks', async () => {
-    render(<BrowserRouter><App /></BrowserRouter>, '/');
+    const {history} = await  (waitFor (() => renderWithRouter(<App/>)))
+    expect(history.location.pathname).toBe('/')
+    const emailInput = screen.getByTestId('email-input');
+    const passwordInput = screen.getByTestId('password-input');
+    const button = screen.getByTestId('login-submit-btn');
+    const email = 'email@pessoa.com';
+    const password = '1234567';
+    userEvent.type(emailInput, email);
+    userEvent.type(passwordInput, password);
+    userEvent.click(button);
     const changeToDrinks = screen.getByTestId(drinksBottomBtn);
     userEvent.click(changeToDrinks);
-    expect(document.location.pathname).toBe('/drinks');
+    expect(history.location.pathname).toBe('/drinks');
     const searchButton = screen.getByTestId(searchTopBtn);
     userEvent.click(searchButton);
     const inputText = screen.getByTestId(searchInput);
@@ -108,10 +162,19 @@ describe('Verifica a cobertura do componente SearchBar', () => {
     cleanup();
   });
   test('Testa a filtro dos radios buttons Foods (firstLetter)', async () => {
-    render(<BrowserRouter><App /></BrowserRouter>, '/');
+    const {history} = await  (waitFor (() => renderWithRouter(<App/>)))
+    expect(history.location.pathname).toBe('/')
+    const emailInput = screen.getByTestId('email-input');
+    const passwordInput = screen.getByTestId('password-input');
+    const button = screen.getByTestId('login-submit-btn');
+    const email = 'email@pessoa.com';
+    const password = '1234567';
+    userEvent.type(emailInput, email);
+    userEvent.type(passwordInput, password);
+    userEvent.click(button);
     const changeToFoods = screen.getByTestId(foodBottomBtn);
     userEvent.click(changeToFoods);
-    expect(document.location.pathname).toBe('/foods');
+    expect(history.location.pathname).toBe('/foods');
     const searchButton = screen.getByTestId(searchTopBtn);
     userEvent.click(searchButton);
     const inputText = screen.getByTestId(searchInput);
@@ -124,16 +187,19 @@ describe('Verifica a cobertura do componente SearchBar', () => {
     cleanup();
   });
   test('Testa a filtro dos radios buttons Drinks (firstLetter - none)', async () => {
-    render(
-      <GlobalContext.Provider value={ store }>
-        <BrowserRouter>
-          <App />
-        </BrowserRouter>
-      </GlobalContext.Provider>,
-    );
+    const {history} = await  (waitFor (() => renderWithRouter(<App/>)))
+    expect(history.location.pathname).toBe('/')
+    const emailInput = screen.getByTestId('email-input');
+    const passwordInput = screen.getByTestId('password-input');
+    const button = screen.getByTestId('login-submit-btn');
+    const email = 'email@pessoa.com';
+    const password = '1234567';
+    userEvent.type(emailInput, email);
+    userEvent.type(passwordInput, password);
+    userEvent.click(button);
     const changeToDrinks = screen.getByTestId(drinksBottomBtn);
     userEvent.click(changeToDrinks);
-    expect(document.location.pathname).toBe('/drinks');
+    expect(history.location.pathname).toBe('/drinks');
     const searchButton = screen.getByTestId(searchTopBtn);
     userEvent.click(searchButton);
     const firstLetter = screen.getByTestId(flSearchRadio);
@@ -144,17 +210,20 @@ describe('Verifica a cobertura do componente SearchBar', () => {
     cleanup();
   });
 
-  test.skip('Testa a filtro dos radios buttons Foods (firstLetter - none)', async () => {
-    render(
-      <GlobalContext.Provider value={ store }>
-        <BrowserRouter>
-          <App />
-        </BrowserRouter>
-      </GlobalContext.Provider>,
-    );
+  test('Testa a filtro dos radios buttons Foods (firstLetter - none)', async () => {
+    const {history} = await  (waitFor (() => renderWithRouter(<App/>)))
+    expect(history.location.pathname).toBe('/')
+    const emailInput = screen.getByTestId('email-input');
+    const passwordInput = screen.getByTestId('password-input');
+    const button = screen.getByTestId('login-submit-btn');
+    const email = 'email@pessoa.com';
+    const password = '1234567';
+    userEvent.type(emailInput, email);
+    userEvent.type(passwordInput, password);
+    userEvent.click(button);
     const changeToFoods = screen.getByTestId(foodBottomBtn);
     userEvent.click(changeToFoods);
-    expect(document.location.pathname).toBe('/foods');
+    expect(history.location.pathname).toBe('/foods');
     const searchButton = screen.getByTestId(searchTopBtn);
     userEvent.click(searchButton);
     const firstLetter = screen.getByTestId(flSearchRadio);
@@ -166,15 +235,20 @@ describe('Verifica a cobertura do componente SearchBar', () => {
     expect(global.fetch).not.toHaveBeenCalledWith('https://www.themealdb.com/api/json/v1/1/search.php?f=lemon');
     expect(global.alert).toHaveBeenCalled();
   });
-  test.skip('Testa a filtro dos radios buttons Drinks (ingredients)', async () => {
-    render(
-      <BrowserRouter>
-        <App />
-      </BrowserRouter>,
-    );
+  test('Testa a filtro dos radios buttons Drinks (ingredients)', async () => {
+    const {history} = await  (waitFor (() => renderWithRouter(<App/>)))
+    expect(history.location.pathname).toBe('/')
+    const emailInput = screen.getByTestId('email-input');
+    const passwordInput = screen.getByTestId('password-input');
+    const button = screen.getByTestId('login-submit-btn');
+    const email = 'email@pessoa.com';
+    const password = '1234567';
+    userEvent.type(emailInput, email);
+    userEvent.type(passwordInput, password);
+    userEvent.click(button);
     const changeToDrinks = screen.getByTestId(drinksBottomBtn);
     userEvent.click(changeToDrinks);
-    expect(document.location.pathname).toBe('/drinks');
+    expect(history.location.pathname).toBe('/drinks');
     const searchButton = screen.getByTestId(searchTopBtn);
     userEvent.click(searchButton);
     const inputText = screen.getByTestId(searchInput);
@@ -190,11 +264,20 @@ describe('Verifica a cobertura do componente SearchBar', () => {
     userEvent.click(buton);
     expect(global.fetch).toHaveBeenCalled();
   });
-  test.skip('Testa a filtro dos radios buttons Drinks(no selection)', async () => {
-    render(<BrowserRouter><App /></BrowserRouter>, '/');
+  test('Testa a filtro dos radios buttons Drinks(no selection)', async () => {
+    const {history} = await  (waitFor (() => renderWithRouter(<App/>)))
+    expect(history.location.pathname).toBe('/')
+    const emailInput = screen.getByTestId('email-input');
+    const passwordInput = screen.getByTestId('password-input');
+    const button = screen.getByTestId('login-submit-btn');
+    const email = 'email@pessoa.com';
+    const password = '1234567';
+    userEvent.type(emailInput, email);
+    userEvent.type(passwordInput, password);
+    userEvent.click(button);
     const changeToDrinks = screen.getByTestId(drinksBottomBtn);
     userEvent.click(changeToDrinks);
-    expect(document.location.pathname).toBe('/drinks');
+    expect(history.location.pathname).toBe('/drinks');
     const searchButton = screen.getByTestId(searchTopBtn);
     userEvent.click(searchButton);
     const inputText = screen.getByTestId(searchInput);
@@ -206,11 +289,20 @@ describe('Verifica a cobertura do componente SearchBar', () => {
     expect(global.fetch).not.toHaveBeenCalledWith('https://www.thecocktaildb.com/api/json/v1/1/search.php?f=vodka');
     expect(global.alert).toHaveBeenCalled();
   });
-  test.skip('Testa a filtro dos radios buttons Foods(no selection)', async () => {
-    render(<BrowserRouter><App /></BrowserRouter>, '/');
+  test('Testa a filtro dos radios buttons Foods(no selection)', async () => {
+    const {history} = await  (waitFor (() => renderWithRouter(<App/>)))
+    expect(history.location.pathname).toBe('/')
+    const emailInput = screen.getByTestId('email-input');
+    const passwordInput = screen.getByTestId('password-input');
+    const button = screen.getByTestId('login-submit-btn');
+    const email = 'email@pessoa.com';
+    const password = '1234567';
+    userEvent.type(emailInput, email);
+    userEvent.type(passwordInput, password);
+    userEvent.click(button);
     const changeToFoods = screen.getByTestId(foodBottomBtn);
     userEvent.click(changeToFoods);
-    expect(document.location.pathname).toBe('/foods');
+    expect(history.location.pathname).toBe('/foods');
     const searchButton = screen.getByTestId(searchTopBtn);
     userEvent.click(searchButton);
     const inputText = screen.getByTestId(searchInput);
@@ -220,10 +312,32 @@ describe('Verifica a cobertura do componente SearchBar', () => {
     const buton = screen.getByTestId(execSearchBtn);
     userEvent.type(inputText, 'chicken');
     act(() => userEvent.click(buton));
-    console.log(inputText.value, ing.checked, name.checked, fl.checked);
     expect(global.fetch).not.toHaveBeenCalledWith('https://www.thecocktaildb.com/api/json/v1/1/filter.php?i=vodka');
     expect(global.fetch).not.toHaveBeenCalledWith('https://www.thecocktaildb.com/api/json/v1/1/search.php?s=vodka');
     expect(global.fetch).not.toHaveBeenCalledWith('https://www.thecocktaildb.com/api/json/v1/1/search.php?f=vodka');
     expect(global.alert).toHaveBeenCalled();
+  });
+  
+  it('Testa a filtro dos radios buttons Foods(no selection)', async () => {
+    const {history} = await  (waitFor (() => renderWithRouter(<GlobalProvider><App/></GlobalProvider>)))
+    expect(history.location.pathname).toBe('/')
+    history.push('/foods')
+    expect(history.location.pathname).toBe('/foods');
+    const SearchIcon = screen.getByTestId('search-top-btn')
+    userEvent.click(SearchIcon)
+    const SearchInput = screen.getByRole('textbox')
+    expect(SearchInput).toBeInTheDocument()
+    await act(async() => userEvent.type(SearchInput, 'xablau'))
+    // await waitFor(() => )
+    // expect(searchInput).toHaveTextContent('xablau')
+    const RadioName = screen.getByRole('radio', { name: /name/i })
+    userEvent.click(RadioName)
+    expect(RadioName).toBeChecked()
+    const PesquisarButton = screen.getByRole('button', { name: /pesquisar/i })
+    await act(async () => 
+      userEvent.click(PesquisarButton)
+    )
+    screen.logTestingPlaygroundURL()
+    
   });
 });

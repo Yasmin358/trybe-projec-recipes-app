@@ -26,20 +26,22 @@ function SearchBar() {
 
   const foodFunction = async () => {
     const { radios, SearchInput } = filter;
-
+    let apiResponse = [];
     if (radios === 'firstLetter' && (SearchInput.length > 1 || !SearchInput.trim())) {
       return global.alert('Your search must have only 1 (one) character');
     }
     switch (radios) {
     case 'ingredientes':
-      setapiFoods(await foodsFilterIngredients(SearchInput));
+      apiResponse = await foodsFilterIngredients(SearchInput);
+      if (apiResponse) { setapiFoods(apiResponse); } else { setapiFoods(apiFoods); }
       break;
     case 'name':
-      // console.log(await foodsFilterNome(SearchInput));
-      setapiFoods(await foodsFilterNome(SearchInput));
+      apiResponse = await foodsFilterNome(SearchInput);
+      if (apiResponse) { setapiFoods(apiResponse); } else { setapiFoods(apiFoods); }
       break;
     case 'firstLetter':
-      setapiFoods(await foodsFilterFirstLetter(SearchInput));
+      apiResponse = await foodsFilterFirstLetter(SearchInput);
+      if (apiResponse) { setapiFoods(apiResponse); } else { setapiFoods(apiFoods); }
       break;
     default:
       return global
@@ -49,19 +51,22 @@ function SearchBar() {
 
   const drinkFunction = async () => {
     const { radios, SearchInput } = filter;
-
+    let apiResponse = [];
     if (radios === 'firstLetter' && (SearchInput.length > 1 || !SearchInput.trim())) {
       return global.alert('Your search must have only 1 (one) character');
     }
     switch (radios) {
     case 'ingredientes':
-      setapiDrinks(await drinkFilterIngredients(SearchInput));
+      apiResponse = await drinkFilterIngredients(SearchInput);
+      if (apiResponse) { setapiDrinks(apiResponse); } else { setapiDrinks(apiDrinks); }
       break;
     case 'name':
-      setapiDrinks(await drinkFilterNome(SearchInput));
+      apiResponse = await drinkFilterNome(SearchInput);
+      if (apiResponse) { setapiDrinks(apiResponse); } else { setapiDrinks(apiDrinks); }
       break;
     case 'firstLetter':
-      setapiDrinks(await drinkFilterFirstLetter(SearchInput));
+      apiResponse = await drinkFilterFirstLetter(SearchInput);
+      if (apiResponse) { setapiDrinks(apiResponse); } else { setapiDrinks(apiDrinks); }
       break;
     default:
       return global
@@ -133,7 +138,7 @@ function SearchBar() {
         />
       </label>
       <button
-        type="submit"
+        type="button"
         data-testid="exec-search-btn"
         onClick={ handleSubmit }
       >
