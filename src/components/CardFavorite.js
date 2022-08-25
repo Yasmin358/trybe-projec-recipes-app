@@ -17,8 +17,7 @@ const handleShareBtn = (e) => {
 };
 
 function CardFavorite(props) {
-  const { props: favArray } = props;
-  console.log(favArray);
+  const { props: favArray, handleFavBtn } = props;
 
   const renderFavoritesCards = (favs) => {
     const markup = (array) => array.map((el, index) => (
@@ -48,10 +47,16 @@ function CardFavorite(props) {
         </button>
         <button
           type="button"
+          data-details={ el.id }
           data-testid={ `${index}-horizontal-favorite-btn` }
           src={ favIconBlack } // POR CAUSA DO CYPRESS!
+          onClick={ handleFavBtn }
         >
-          <img src={ favIconBlack } alt="share icon" />
+          <img
+            src={ favIconBlack }
+            alt="share icon"
+            data-details={ el.id }
+          />
 
         </button>
       </figure>
@@ -69,6 +74,7 @@ function CardFavorite(props) {
 
 CardFavorite.propTypes = {
   props: PropTypes.arrayOf(PropTypes.any).isRequired,
+  handleFavBtn: PropTypes.func.isRequired,
 };
 
 export default CardFavorite;

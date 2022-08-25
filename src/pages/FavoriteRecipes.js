@@ -1,4 +1,4 @@
-import React, { useContext, useEffect } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import Header from '../components/Header';
 import GlobalContext from '../context/GlobalContext';
 import CardFavorite from '../components/CardFavorite';
@@ -9,13 +9,31 @@ const getFavoritesFromLocalStorage = () => {
   return JSON.parse(favs);
 };
 
+const initialFavs = getFavoritesFromLocalStorage();
+
 function FavoriteRecipes() {
+  const [currentFavs, setCurrentFavs] = useState(initialFavs);
+  const [favsUpdated, setFavsUpdated] = useState(false);
+
+  const handleFavBtn = ({ target }) => {
+    console.log(target.dataset.details);
+    const id = target.dataset.details;
+    const favs = JSON.parse(localStorage.getItem('favoriteRecipes'));
+    console.log(favs);
+    const newFavs = favs.filter((el) => Number(el.id) !== Number(id));
+    console.log(newFavs);
+    localStorage.setItem('favoriteRecipes', JSON.stringify(newFavs));
+    setFavsUpdated((prev) => !prev);
+  };
+
   const { setheaderTitle } = useContext(GlobalContext);
   useEffect(() => {
     setheaderTitle({ title: 'Favorite Recipes', search: false });
   }, [setheaderTitle]);
 
-  const favs = getFavoritesFromLocalStorage();
+  useEffect(() => {
+    setCurrentFavs(getFavoritesFromLocalStorage());
+  }, [favsUpdated]);
 
   return (
     <>
@@ -38,9 +56,8 @@ function FavoriteRecipes() {
       >
         Drink
       </button>
-      { favs
-        ? <CardFavorite props={ favs } />
-        : <p>Você não tem nenhuma receita favorita</p> }
+      { currentFavs
+      && <CardFavorite props={ currentFavs } handleFavBtn={ handleFavBtn } />}
     </>
   );
 }
