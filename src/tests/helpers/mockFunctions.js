@@ -3,24 +3,10 @@ export const mockFetch = (data) => {
     json: jest.fn().mockResolvedValue({data})
   })};
 
-export const mockLocalStorage = (data) => {
-  localStorage = {...data};
-  localStorage.__proto__ = {
-    /**
-     * 
-     * @param {String} key  The key to be set into the localStorage object.
-     * @returns 
-     */
-    getItem(key) {
-      return localStorage[key];
-    },
-    /**
-     * 
-     * @param {String} key The key to be set into the localStorage object.
-     * @param {String} json a JavaScript Object Notation (JSON) string.
-     */
-    setItem(key, json) {
-      localStorage[key] = json;
-    }
-  }
+export const mockLocalStorage = (itemKey, itemValue) => {
+  jest.spyOn(localStorage.__proto__, 'getItem');
+  jest.spyOn(localStorage.__proto__, 'setItem');
+  localStorage.setItem(itemKey, itemValue);
+  localStorage.__proto__.setItem = jest.fn().mockImplementation((key, value) => localStorage[key] = value);
+  localStorage.__proto__.getItem = jest.fn().mockImplementation((key) => localStorage[key])
 };
