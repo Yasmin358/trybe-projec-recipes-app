@@ -9,9 +9,6 @@ import { act } from "react-dom/test-utils";
 import userEvent from '@testing-library/user-event';
 import CardFavorite from "../components/CardFavorite";
 
-jest.spyOn(localStorage, 'getItem');
-jest.spyOn(localStorage, 'setItem');
-
 const favPageStore = {
   headerTitle: '',
   setheaderTitle(value) {
