@@ -9,8 +9,9 @@ import Login from './pages/Login';
 import Foods from './pages/Foods';
 import Profile from './pages/Profile';
 import Drinks from './pages/Drinks';
-import Recipes from './pages/Recipes';
-import DrinksRecipes from './pages/DrinksRecipes';
+import RecipeDetails from './pages/RecipeDetails';
+import RecipeInProgress from './pages/RecipeInProgress';
+// import DrinksRecipes from './pages/DrinksRecipes';
 import DoneRecipes from './pages/DoneRecipes';
 import FavoriteRecipes from './pages/FavoriteRecipes';
 import Footer from './components/Footer';
@@ -29,9 +30,16 @@ function App() {
               <Footer { ...props } />
             </>) }
         />
-        <Route path="/foods/:id" component={ Recipes } />
-        <Route path="/foods/:id/in-progress" component={ Recipes } />
+        {/* Os detalhes de bebidas e comidas são renderizados no mesmo componente (req. 24) */}
+        <Route exact path="/foods/:id" component={ RecipeDetails } />
         <Route
+          exact
+          path="/foods/:id/in-progress"
+          component={ RecipeInProgress }
+        />
+
+        <Route
+          exact
           path="/profile"
           render={ (props) => (
             <>
@@ -49,12 +57,13 @@ function App() {
               <Footer { ...props } />
             </>) }
         />
-        <Route path="/drinks/:id" component={ DrinksRecipes } />
-        <Route path="/drinks/:id/in-progress" component={ DrinksRecipes } />
+        {/* Os detalhes de bebidas e comidas são renderizados no mesmo componente (req. 24) */}
+        <Route exact path="/drinks/:id" component={ RecipeDetails } />
+        <Route exact path="/drinks/:id/in-progress" component={ RecipeInProgress } />
 
-        <Route path="/done-recipes" component={ DoneRecipes } />
+        <Route exact path="/done-recipes" component={ DoneRecipes } />
 
-        <Route path="/favorite-recipes" component={ FavoriteRecipes } />
+        <Route exact path="/favorite-recipes" component={ FavoriteRecipes } />
 
       </GlobalProvider>
     </Switch>
