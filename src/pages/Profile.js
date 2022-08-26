@@ -10,6 +10,7 @@ function Profile() {
   }, [setheaderTitle]);
 
   const getEmail = () => {
+    if (!localStorage.getItem('user')) return null;
     const email = JSON.parse(localStorage.getItem('user'));
     return email.email;
   };
