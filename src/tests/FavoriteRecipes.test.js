@@ -1,6 +1,6 @@
 import React from "react";
 import { favoriteRecipes, favoriteRecipesOnlyDrinks } from "./helpers/mockLocalStorageObject";
-import { render, screen, waitFor } from "@testing-library/react";
+import { render, screen } from "@testing-library/react";
 import FavoriteRecipes from "../pages/FavoriteRecipes";
 import GlobalContext from "../context/GlobalContext";
 import { Router } from "react-router-dom";
@@ -66,7 +66,6 @@ describe('Tests for the FavoriteRecipes page', () => {
     act(() => renderPage());
     const foodsFilterBtn =  screen.getByTestId('filter-by-food-btn');
     act(() => userEvent.click(foodsFilterBtn));
-    // console.log(document.querySelectorAll('figure')[0].children[0].href);
     const filteredByFood = document.querySelectorAll('figure').length;
     expect(filteredByFood).toBe(1);
   })
