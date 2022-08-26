@@ -1,6 +1,6 @@
 export const mockFetch = (data) => {
   global.fetch = jest.fn().mockResolvedValue({
-    json: jest.fn().mockResolvedValue({data})
+    json: jest.fn().mockResolvedValue(data),
   })};
 
 export const mockLocalStorage = (itemKey, itemValue) => {
