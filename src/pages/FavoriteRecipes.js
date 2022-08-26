@@ -16,12 +16,9 @@ function FavoriteRecipes() {
   const [favsUpdated, setFavsUpdated] = useState(false);
 
   const handleFavBtn = ({ target }) => {
-    console.log(target.dataset.details);
     const id = target.dataset.details;
     const favs = JSON.parse(localStorage.getItem('favoriteRecipes'));
-    console.log(favs);
     const newFavs = favs.filter((el) => Number(el.id) !== Number(id));
-    console.log(newFavs);
     localStorage.setItem('favoriteRecipes', JSON.stringify(newFavs));
     setFavsUpdated((prev) => !prev);
   };
@@ -32,7 +29,6 @@ function FavoriteRecipes() {
     }
     const favs = getFavoritesFromLocalStorage();
     const filteredFavs = favs.filter((el) => el.type === type);
-    console.log(filteredFavs);
     if (filteredFavs.length > 0) return setCurrentFavs(filteredFavs);
     setCurrentFavs(false);
   };
