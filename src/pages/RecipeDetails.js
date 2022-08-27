@@ -35,11 +35,14 @@ const toogleStartButn = (id) => {
 };
 
 const renderBtnText = (id) => {
+  // console.log(localStorage.getItem('inProgressRecipes'));
   if (!localStorage.getItem('inProgressRecipes')) return START_RECIPE;
   const inProgress = JSON.parse(localStorage.getItem('inProgressRecipes'));
+  // console.log(inProgress);
   const idsObj = { ...inProgress?.cocktails, ...inProgress?.meals };
   if (!idsObj) return START_RECIPE;
-  const match = objectFilter(idsObj, (key) => key === id);
+  const match = objectFilter(idsObj, (key) => Number(key) === Number(id));
+  // console.log(match);
   if (Object.entries(match).length > 0) return 'Continue Recipe';
   return START_RECIPE;
 };
