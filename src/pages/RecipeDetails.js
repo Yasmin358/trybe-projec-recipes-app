@@ -9,6 +9,8 @@ import shareIcon from '../images/shareIcon.svg';
 import favIconWhite from '../images/whiteHeartIcon.svg';
 import favIconBlack from '../images/blackHeartIcon.svg';
 
+const START_RECIPE = 'Start Recipe';
+
 const checkIfRecipeIsFav = (setFavoriteFunc, id) => {
   const oldFavs = localStorage.getItem('favoriteRecipes');
   if (!oldFavs) {
@@ -25,6 +27,7 @@ const checkIfRecipeIsFav = (setFavoriteFunc, id) => {
 };
 
 const toogleStartButn = (id) => {
+  if (!localStorage.getItem('doneRecipes')) return '';
   const done = localStorage.getItem('doneRecipes');
   const match = JSON.parse(done)?.find((el) => Number(el.id) === Number(id));
   if (match) return 'hidden';
@@ -32,12 +35,13 @@ const toogleStartButn = (id) => {
 };
 
 const renderBtnText = (id) => {
+  if (!localStorage.getItem('inProgressRecipes')) return START_RECIPE;
   const inProgress = JSON.parse(localStorage.getItem('inProgressRecipes'));
   const idsObj = { ...inProgress?.cocktails, ...inProgress?.meals };
-  if (!idsObj) return 'Start Recipe';
+  if (!idsObj) return START_RECIPE;
   const match = objectFilter(idsObj, (key) => key === id);
   if (Object.entries(match).length > 0) return 'Continue Recipe';
-  return 'Start Recipe';
+  return START_RECIPE;
 };
 
 function RecipeDetails(props) {
@@ -97,7 +101,7 @@ function RecipeDetails(props) {
 
   useEffect(() => {
     checkIfRecipeIsFav(setFavorite, id);
-  }, [recipe]);
+  }, [recipe, id]);
 
   const handleShareBtn = () => {
     const ONE_HALF_SEC = 1500;
@@ -109,38 +113,36 @@ function RecipeDetails(props) {
   };
 
   return (
-    recipe
-    && (
-      <>
-        <DetailsCard { ...recipe } />
-        <p className="hidden link-copied">Link copied!</p>
+    <>
+      <DetailsCard { ...recipe } />
+      <p className="hidden link-copied">Link copied!</p>
+      <button
+        type="button"
+        data-testid="share-btn"
+        onClick={ handleShareBtn }
+      >
+        <img src={ shareIcon } alt="share icon" />
+      </button>
+      <button
+        type="button"
+        data-testid="favorite-btn"
+        onClick={ handleFavBtn }
+        src={ favorite ? favIconBlack : favIconWhite } // Por causa do CYPRESS!!
+      >
+        <img src={ favorite ? favIconBlack : favIconWhite } alt="fav icon" />
+      </button>
+      <RecomendationCard />
+      <Link to={ `/${route}/${id}/in-progress` }>
         <button
           type="button"
-          data-testid="share-btn"
-          onClick={ handleShareBtn }
+          className={ `${toogleStartButn(id)} btn btn--start` }
+          data-testid="start-recipe-btn"
         >
-          <img src={ shareIcon } alt="share icon" />
+          { renderBtnText(id) }
         </button>
-        <button
-          type="button"
-          data-testid="favorite-btn"
-          onClick={ handleFavBtn }
-          src={ favorite ? favIconBlack : favIconWhite } // Por causa do CYPRESS!!
-        >
-          <img src={ favorite ? favIconBlack : favIconWhite } alt="share icon" />
-        </button>
-        <RecomendationCard />
-        <Link to={ `/${route}/${id}/in-progress` }>
-          <button
-            type="button"
-            className={ `${toogleStartButn(id)} btn btn--start` }
-            data-testid="start-recipe-btn"
-          >
-            { renderBtnText(id) }
-          </button>
-        </Link>
-      </>
-    )
+      </Link>
+    </>
+
   );
 }
 

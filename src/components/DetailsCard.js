@@ -3,6 +3,7 @@ import PropTypes from 'prop-types';
 import { objectFilter } from '../helperFuncions';
 
 function DetailsCard(props) {
+  if (!props) return null;
   const recipe = { ...props };
   const { strDrinkThumb, strMealThumb, strCategory, strAlcoholic,
     strDrink, strMeal, strInstructions, strYoutube } = recipe;
