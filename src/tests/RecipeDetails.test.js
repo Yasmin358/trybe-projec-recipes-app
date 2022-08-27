@@ -170,4 +170,16 @@ describe('Tests for the RecipesDetails component', () => {
     expect(updatedFavIcon).toBe(str.favIcon);
   })
 
+  it('checks if by clicking on "share" btn, the url is copied to the clipboard', async() => {
+    history.push(`/foods/${recipes.teryakiID}`);
+    mockFetch(id52772);
+    mockLocalStorage('favoriteRecipes', favoriteRecipes);
+    act(() => renderPage(recipes.teryakiID, history.location.pathname));
+    await waitFor(() => { expect(screen.getByTestId('favorite-btn')).toBeInTheDocument()});
+    const shareBtn = screen.getByTestId('share-btn');
+    // Como testar a handleShareBtn?
+    // userEvent.click(shareBtn);
+
+  })
+
 })
