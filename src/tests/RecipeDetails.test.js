@@ -171,15 +171,20 @@ describe('Tests for the RecipesDetails component', () => {
   })
 
   it('checks if by clicking on "share" btn, the url is copied to the clipboard', async() => {
+    // Mock em "exeComamand" foi necessário para mockar a função "clipboardCopy" (linha 108, RecipeDetails.js)
+    window.document.execCommand = jest.fn().mockReturnValue('copy');
     history.push(`/foods/${recipes.teryakiID}`);
     mockFetch(id52772);
     mockLocalStorage('favoriteRecipes', favoriteRecipes);
     act(() => renderPage(recipes.teryakiID, history.location.pathname));
     await waitFor(() => { expect(screen.getByTestId('favorite-btn')).toBeInTheDocument()});
     const shareBtn = screen.getByTestId('share-btn');
-    // Como testar a handleShareBtn?
-    // userEvent.click(shareBtn);
-
+    // useFakeTimers para verificar o retorno do setTimeout
+    jest.useFakeTimers();
+    userEvent.click(shareBtn);
+    expect(screen.getByText('Link copied!')).not.toHaveStyle('display: none');
+    jest.advanceTimersByTime(1500);
+    expect(screen.getByText('Link copied!')).toHaveClass('hidden');
   })
 
 })

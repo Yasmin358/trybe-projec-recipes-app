@@ -38,7 +38,7 @@ const renderBtnText = (id) => {
   if (!localStorage.getItem('inProgressRecipes')) return START_RECIPE;
   const inProgress = JSON.parse(localStorage.getItem('inProgressRecipes'));
   const idsObj = { ...inProgress?.cocktails, ...inProgress?.meals };
-  if (!idsObj) return START_RECIPE;
+  // if (!idsObj) return START_RECIPE;
   const match = objectFilter(idsObj, (key) => Number(key) === Number(id));
   if (Object.entries(match).length > 0) return 'Continue Recipe';
   return START_RECIPE;
