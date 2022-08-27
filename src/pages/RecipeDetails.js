@@ -27,11 +27,12 @@ const checkIfRecipeIsFav = (setFavoriteFunc, id) => {
 };
 
 const toogleStartButn = (id) => {
-  if (!localStorage.getItem('doneRecipes')) return '';
+  if (!localStorage.getItem('doneRecipes')) return true;
   const done = localStorage.getItem('doneRecipes');
   const match = JSON.parse(done)?.find((el) => Number(el.id) === Number(id));
-  if (match) return 'hidden';
-  return '';
+  // if (match) return 'hidden';
+  // return '';
+  return !match;
 };
 
 const renderBtnText = (id) => {
@@ -133,13 +134,15 @@ function RecipeDetails(props) {
       </button>
       <RecomendationCard />
       <Link to={ `/${route}/${id}/in-progress` }>
-        <button
-          type="button"
-          className={ `${toogleStartButn(id)} btn btn--start` }
-          data-testid="start-recipe-btn"
-        >
-          { renderBtnText(id) }
-        </button>
+        { toogleStartButn(id)
+        && (
+          <button
+            type="button"
+            className={ `${toogleStartButn(id)} btn btn--start` }
+            data-testid="start-recipe-btn"
+          >
+            { renderBtnText(id) }
+          </button>)}
       </Link>
     </>
 

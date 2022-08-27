@@ -6,7 +6,7 @@ import GlobalContext from '../context/GlobalContext';
 import { Router } from "react-router-dom";
 import { mockFetch, mockLocalStorage } from './helpers/mockFunctions';
 import { favoriteRecipes, doneRecipes, inProgressRecipes, favoriteRecipesOnlyDrinks } from './helpers/mockLocalStorageObject';
-import { id52772, id11007, id52773, id178319 } from './helpers/recipesByID';
+import { id52772, id11007, id52773, id178319, id178320 } from './helpers/recipesByID';
 import {createMemoryHistory} from 'history';
 import userEvent from '@testing-library/user-event';
 
@@ -23,6 +23,8 @@ const recipes = {
   aquamirineID: 'https://www.thecocktaildb.com/api/json/v1/1/lookup.php?i=178319',
   notFavID: '52773',
   notFavUrl: 'https://www.themealdb.com/api/json/v1/1/lookup.php?i=52773',
+  drinkNotFavID: '178320',
+  drinkNotFavUrl: 'https://www.thecocktaildb.com/api/json/v1/1/lookup.php?i=178320',
 }
 
 const str = {
@@ -116,7 +118,8 @@ describe('Tests for the RecipesDetails component', () => {
     mockLocalStorage('doneRecipes', doneRecipes);
     act(() => renderPage(recipes.teryakiID, history.location.pathname));
     await waitFor(() => { expect(screen.getByTestId('favorite-btn')).toBeInTheDocument()});
-    expect(screen.getByTestId('start-recipe-btn')).not.toHaveStyle('display: none');
+    const startLink = screen.getByRole('link').children;
+    expect(startLink.length).toBe(0);
   })
 
   it('checks if the "start" button is displayed if the recipe has not yet been done', async() => {
@@ -130,11 +133,11 @@ describe('Tests for the RecipesDetails component', () => {
   })
 
   it('checks if a recipe not yet favorited can be favorited, and its icon changes from empty to filled', async() => {
-    history.push(`/foods/${recipes.teryakiID}`);
-    mockFetch(id52772);
+    history.push(`/drinks/${recipes.drinkNotFavID}`);
+    mockFetch(id178320);
     mockLocalStorage();
-    localStorage.setItem('favoriteRecipes', favoriteRecipesOnlyDrinks);
-    act(() => renderPage(recipes.teryakiID, history.location.pathname));
+    localStorage.setItem('favoriteRecipes', favoriteRecipes);
+    act(() => renderPage(recipes.drinkNotFavID, history.location.pathname));
     await waitFor(() => { expect(screen.getByTestId('favorite-btn')).toBeInTheDocument()});
     const prevFavIcon = screen.getByAltText('fav icon').src.split('t/')[1];
     expect(prevFavIcon).toBe(str.defavIcon);
@@ -144,10 +147,10 @@ describe('Tests for the RecipesDetails component', () => {
   })
 
   it('checks if a favorited recipe can be defavorited', async () => {
-    history.push(`/foods/${recipes.teryakiID}`);
-    mockFetch(id52772);
+    history.push(`/drinks/${recipes.margaritaID}`);
+    mockFetch(id11007);
     mockLocalStorage('favoriteRecipes', favoriteRecipes);
-    act(() => renderPage(recipes.teryakiID, history.location.pathname));
+    act(() => renderPage(recipes.margaritaID, history.location.pathname));
     await waitFor(() => { expect(screen.getByTestId('favorite-btn')).toBeInTheDocument()});
     const prevFavIcon = screen.getByAltText('fav icon').src.split('t/')[1];
     expect(prevFavIcon).toBe(str.favIcon);
