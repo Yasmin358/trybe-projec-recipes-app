@@ -68,3 +68,29 @@ export const favoriteRecipesOnlyDrinks = JSON.stringify(
       "image": "https://www.thecocktaildb.com/images/media/drink/yqvvqs1475667388.jpg"
   }
 ])
+
+export const doneRecipes = JSON.stringify(
+    [
+        {
+            "id": 52772,
+            "type": "comida",
+            "nationality": "brazil",
+            "category": "comida",
+            "alcoholicOrNot": "",
+            "name": "name",
+            "image": "img",
+            "doneDate": "data",
+            "tags": [
+                "tag1",
+                "tag2"
+            ]
+        }
+    ]
+)
+
+export const inProgressRecipes = JSON.stringify({
+    cocktails: {
+       "178319": ['Hpnotiq', 'Pineapple Juice', 'Banana Liqueur'],
+    },
+    meals: { },
+})
