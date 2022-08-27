@@ -136,11 +136,38 @@ describe('Tests for the RecipesDetails component', () => {
     localStorage.setItem('favoriteRecipes', favoriteRecipesOnlyDrinks);
     act(() => renderPage(recipes.teryakiID, history.location.pathname));
     await waitFor(() => { expect(screen.getByTestId('favorite-btn')).toBeInTheDocument()});
-    const favIcon = screen.getByAltText('fav icon').src.split('t/')[1];
-    expect(favIcon).toBe(str.defavIcon);
+    const prevFavIcon = screen.getByAltText('fav icon').src.split('t/')[1];
+    expect(prevFavIcon).toBe(str.defavIcon);
     act(() => userEvent.click(screen.getByTestId('favorite-btn')));
-    // cont. from click on the fav btn
+    const updatedFavIcon = screen.getByAltText('fav icon').src.split('t/')[1];
+    expect(updatedFavIcon).toBe(str.favIcon);
+  })
 
+  it('checks if a favorited recipe can be defavorited', async () => {
+    history.push(`/foods/${recipes.teryakiID}`);
+    mockFetch(id52772);
+    mockLocalStorage('favoriteRecipes', favoriteRecipes);
+    act(() => renderPage(recipes.teryakiID, history.location.pathname));
+    await waitFor(() => { expect(screen.getByTestId('favorite-btn')).toBeInTheDocument()});
+    const prevFavIcon = screen.getByAltText('fav icon').src.split('t/')[1];
+    expect(prevFavIcon).toBe(str.favIcon);
+    act(() => userEvent.click(screen.getByTestId('favorite-btn')));
+    const updatedFavIcon = screen.getByAltText('fav icon').src.split('t/')[1];
+    expect(updatedFavIcon).toBe(str.defavIcon);
+  })
+
+  it('checks if the white heart icon is displayed when there is no fav, and if it is possible to add the recipe as fav', async() => {
+    history.push(`/foods/${recipes.teryakiID}`);
+    mockFetch(id52772);
+    mockLocalStorage();
+    localStorage.clear();
+    act(() => renderPage(recipes.teryakiID, history.location.pathname));
+    await waitFor(() => { expect(screen.getByTestId('favorite-btn')).toBeInTheDocument()});
+    const prevFavIcon = screen.getByAltText('fav icon').src.split('t/')[1];
+    expect(prevFavIcon).toBe(str.defavIcon);
+    act(() => userEvent.click(screen.getByTestId('favorite-btn')));
+    const updatedFavIcon = screen.getByAltText('fav icon').src.split('t/')[1];
+    expect(updatedFavIcon).toBe(str.favIcon);
   })
 
 })
