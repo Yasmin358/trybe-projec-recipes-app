@@ -30,7 +30,6 @@ function Foods() {
             onClick={ filterHandleClick }
           >
             All
-
           </button>
           {apiFoodsCategory.map((category, index) => (
             index < maxCategorys

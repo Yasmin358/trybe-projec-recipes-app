@@ -5,8 +5,7 @@ import { objectFilter } from '../helperFuncions';
 function DetailsCard(props) {
   const recipe = { ...props };
   const { strDrinkThumb, strMealThumb, strCategory, strAlcoholic,
-    strDrink, strMeal, strInstructions, strYoutube } = recipe;
-
+    strDrink, strMeal, strInstructions } = recipe;
   const ingredients = objectFilter(recipe,
     (key, value) => key.includes('strIngredient') && value);
 
@@ -28,24 +27,6 @@ function DetailsCard(props) {
     return markup;
   };
 
-  const renderVideo = (videoUrl) => {
-    if (!videoUrl) return null;
-    const videoId = videoUrl.split('=').at(1);
-    return (
-      <iframe
-        data-testid="video"
-        width="560"
-        height="315"
-        src={ `https://www.youtube-nocookie.com/embed/${videoId}` }
-        title="YouTube video player"
-        frameBorder="0"
-        allow="accelerometer; autoplay; clipboard-write;
-          encrypted-media; gyroscope; picture-in-picture"
-        allowFullScreen
-      />
-    );
-  };
-
   return (
     <article>
       <img
@@ -59,9 +40,6 @@ function DetailsCard(props) {
         { ingredientsMarkup(ingredients, measures) }
       </ul>
       <p data-testid="instructions">{strInstructions}</p>
-      <div>
-        { renderVideo(strYoutube) }
-      </div>
     </article>
   );
 }
