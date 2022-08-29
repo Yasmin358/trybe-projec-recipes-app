@@ -74,7 +74,7 @@ function RecipeDetails(props) {
     if (isFavorite) {
       const favs = JSON.parse(localStorage.getItem('favoriteRecipes'));
       const newFavs = favs.filter((el) => el.id !== id);
-      localStorage.setItem('favoriteRecipes', newFavs);
+      localStorage.setItem('favoriteRecipes', JSON.stringify(newFavs));
       return setFavorite(false);
     }
 
