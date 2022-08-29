@@ -11,6 +11,8 @@ function GlobalProvider({ children }) {
   const [apiDrinksCategory, setdrinksCategory] = useState([]);
   const [apiFoodsCategory, setfoodsCategory] = useState([]);
   const [toogleButton, settoogleButton] = useState('');
+  const [recipe, setRecipe] = useState('');
+  const [favorite, setFavorite] = useState(false);
 
   async function requestFoodApi(endpoint) {
     const responseFoods = await foods(endpoint);
@@ -51,16 +53,20 @@ function GlobalProvider({ children }) {
 
   const store = {
     recipesAPIReturn,
-    setRecipesAPIReturn,
     headerTitle,
-    setheaderTitle,
     apiDrinks,
     apiFoods,
     apiDrinksCategory,
     apiFoodsCategory,
     filterHandleClick,
+    recipe,
+    favorite,
+    setheaderTitle,
+    setRecipesAPIReturn,
     setapiDrinks,
     setapiFoods,
+    setRecipe,
+    setFavorite,
   };
 
   // monta array de foods e drinks

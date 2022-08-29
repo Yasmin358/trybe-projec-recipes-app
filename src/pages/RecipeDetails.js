@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useContext, useEffect } from 'react';
 import PropTypes from 'prop-types';
 import { Link } from 'react-router-dom';
 import clipboardCopy from 'clipboard-copy';
@@ -8,6 +8,9 @@ import { objectFilter } from '../helperFuncions';
 import shareIcon from '../images/shareIcon.svg';
 import favIconWhite from '../images/whiteHeartIcon.svg';
 import favIconBlack from '../images/blackHeartIcon.svg';
+import GlobalContext from '../context/GlobalContext';
+
+const START_RECIPE = 'Start Recipe';
 
 const checkIfRecipeIsFav = (setFavoriteFunc, id) => {
   const oldFavs = localStorage.getItem('favoriteRecipes');
@@ -25,19 +28,22 @@ const checkIfRecipeIsFav = (setFavoriteFunc, id) => {
 };
 
 const toogleStartButn = (id) => {
+  if (!localStorage.getItem('doneRecipes')) return true;
   const done = localStorage.getItem('doneRecipes');
   const match = JSON.parse(done)?.find((el) => Number(el.id) === Number(id));
-  if (match) return 'hidden';
-  return '';
+  // if (match) return 'hidden';
+  // return '';
+  return !match;
 };
 
 const renderBtnText = (id) => {
+  if (!localStorage.getItem('inProgressRecipes')) return START_RECIPE;
   const inProgress = JSON.parse(localStorage.getItem('inProgressRecipes'));
   const idsObj = { ...inProgress?.cocktails, ...inProgress?.meals };
-  if (!idsObj) return 'Start Recipe';
-  const match = objectFilter(idsObj, (key) => key === id);
+  // if (!idsObj) return START_RECIPE;
+  const match = objectFilter(idsObj, (key) => Number(key) === Number(id));
   if (Object.entries(match).length > 0) return 'Continue Recipe';
-  return 'Start Recipe';
+  return START_RECIPE;
 };
 
 function RecipeDetails(props) {
@@ -49,8 +55,7 @@ function RecipeDetails(props) {
     route === 'foods' ? 'meal' : 'cocktail'
   }db.com/api/json/v1/1/lookup.php?i=${id}`;
 
-  const [recipe, setRecipe] = useState('');
-  const [favorite, setFavorite] = useState(false);
+  const { recipe, setRecipe, favorite, setFavorite } = useContext(GlobalContext);
 
   // Chamada da API realizada na montagem deste componente:
   // TODO: Ajustar este fetch depois da atualizalação dos requisitos anteriores
@@ -62,14 +67,14 @@ function RecipeDetails(props) {
         setRecipe(data[`${route === 'foods' ? 'meals' : 'drinks'}`].at(0));
       })
       .catch((err) => console.error(`SOMETHING WENT WRONG 💣💣💣: ${err}`));
-  }, [url, route, id]);
+  }, [url, route, id, setRecipe]);
 
   const handleFavBtn = () => {
     const isFavorite = checkIfRecipeIsFav(setFavorite, id);
     if (isFavorite) {
       const favs = JSON.parse(localStorage.getItem('favoriteRecipes'));
       const newFavs = favs.filter((el) => el.id !== id);
-      localStorage.setItem('favoriteRecipes', newFavs);
+      localStorage.setItem('favoriteRecipes', JSON.stringify(newFavs));
       return setFavorite(false);
     }
 
@@ -97,7 +102,7 @@ function RecipeDetails(props) {
 
   useEffect(() => {
     checkIfRecipeIsFav(setFavorite, id);
-  }, [recipe]);
+  }, [recipe, id, setFavorite]);
 
   const handleShareBtn = () => {
     const ONE_HALF_SEC = 1500;
@@ -109,38 +114,38 @@ function RecipeDetails(props) {
   };
 
   return (
-    recipe
-    && (
-      <>
-        <DetailsCard { ...recipe } />
-        <p className="hidden link-copied">Link copied!</p>
-        <button
-          type="button"
-          data-testid="share-btn"
-          onClick={ handleShareBtn }
-        >
-          <img src={ shareIcon } alt="share icon" />
-        </button>
-        <button
-          type="button"
-          data-testid="favorite-btn"
-          onClick={ handleFavBtn }
-          src={ favorite ? favIconBlack : favIconWhite } // Por causa do CYPRESS!!
-        >
-          <img src={ favorite ? favIconBlack : favIconWhite } alt="share icon" />
-        </button>
-        <RecomendationCard />
-        <Link to={ `/${route}/${id}/in-progress` }>
+    <>
+      <DetailsCard { ...recipe } />
+      <p className="hidden link-copied">Link copied!</p>
+      <button
+        type="button"
+        data-testid="share-btn"
+        onClick={ handleShareBtn }
+      >
+        <img src={ shareIcon } alt="share icon" />
+      </button>
+      <button
+        type="button"
+        data-testid="favorite-btn"
+        onClick={ handleFavBtn }
+        src={ favorite ? favIconBlack : favIconWhite } // Por causa do CYPRESS!!
+      >
+        <img src={ favorite ? favIconBlack : favIconWhite } alt="fav icon" />
+      </button>
+      <RecomendationCard />
+      <Link to={ `/${route}/${id}/in-progress` }>
+        { toogleStartButn(id)
+        && (
           <button
             type="button"
             className={ `${toogleStartButn(id)} btn btn--start` }
             data-testid="start-recipe-btn"
           >
             { renderBtnText(id) }
-          </button>
-        </Link>
-      </>
-    )
+          </button>)}
+      </Link>
+    </>
+
   );
 }
 

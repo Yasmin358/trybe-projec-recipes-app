@@ -79,3 +79,12 @@ export const drinkFilterFirstLetter = async (firstLetter) => {
   }
   return data.drinks;
 };
+
+export const recipes = async (url) => {
+  const response = await fetch(url);
+  const data = await response.json();
+  if (url.includes('meal')) {
+    return data.meals;
+  }
+  return data.drinks;
+};

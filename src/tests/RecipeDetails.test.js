@@ -1,181 +1,193 @@
 import { render, screen, waitFor } from '@testing-library/react';
 import React from 'react';
-import { BrowserRouter } from 'react-router-dom';
 import { act } from 'react-dom/test-utils';
 import RecipeDetails from '../pages/RecipeDetails';
 import GlobalContext from '../context/GlobalContext';
+import { Router } from "react-router-dom";
+import { mockFetch, mockLocalStorage } from './helpers/mockFunctions';
+import { favoriteRecipes, doneRecipes, inProgressRecipes, favoriteRecipesOnlyDrinks } from './helpers/mockLocalStorageObject';
+import { id52772, id11007, id52773, id178319, id178320 } from './helpers/recipesByID';
+import {createMemoryHistory} from 'history';
+import userEvent from '@testing-library/user-event';
 
-const store = {
+//https://davidwcai.medium.com/react-testing-library-and-the-not-wrapped-in-act-errors-491a5629193b
 
-};
+const store = 'store';
 
-const data = {
-  meals: [{
-    idMeal: '52772',
-    strMeal: 'Teriyaki Chicken Casserole',
-    strDrinkAlternate: null,
-    strCategory: 'Chicken',
-    strArea: 'Japanese',
-    strInstructions: `Preheat oven to 350° F.
-  Spray a 9x13-inch baking pan with non-stick spray.
-  \r\nCombine soy sauce, ½ cup water, brown sugar,
-  ginger and garlic in a small saucepan and cover.
-  Bring to a boil over medium heat. Remove lid and
-  cook for one minute once boiling.
-  \r\nMeanwhile, stir together the corn starch and 2 tablespoons
-  of water in a separate dish until smooth. Once sauce is boiling,
-  add mixture to the saucepan and stir to combine. Cook until
-  the sauce starts to thicken then remove from heat.
-  \r\nPlace the chicken breasts in the prepared pan.
-  Pour one cup of the sauce over top of chicken.
-  Place chicken in oven and bake 35 minutes or until cooked through.
-  Remove from oven and shred chicken in the dish using two forks.
-  \r\n*Meanwhile, steam or cook the vegetables according to package directions.
-  \r\nAdd the cooked vegetables and rice to the casserole dish with the chicken.
-  Add most of the remaining sauce, reserving a bit to drizzle over the top when
-  serving. Gently toss everything together in the casserole dish until combined.
-  Return to oven and cook 15 minutes. Remove from oven and let stand 5 minutes
-  before serving. Drizzle each serving with remaining sauce. Enjoy!`,
-    strMealThumb: 'https://www.themealdb.com/images/media/meals/wvpsxx1468256321.jpg',
-    strTags: 'Meat,Casserole',
-    strYoutube: 'https://www.youtube.com/watch?v=4aZr5hZXP_s',
-    strIngredient1: 'soy sauce',
-    strIngredient2: 'water',
-    strIngredient3: 'brown sugar',
-    strIngredient4: 'ground ginger',
-    strIngredient5: 'minced garlic',
-    strIngredient6: 'cornstarch',
-    strIngredient7: 'chicken breasts',
-    strIngredient8: 'stir-fry vegetables',
-    strIngredient9: 'brown rice',
-    strIngredient10: '',
-    strIngredient11: '',
-    strIngredient12: '',
-    strIngredient13: '',
-    strIngredient14: '',
-    strIngredient15: '',
-    strIngredient16: null,
-    strIngredient17: null,
-    strIngredient18: null,
-    strIngredient19: null,
-    strIngredient20: null,
-    strMeasure1: '3/4 cup',
-    strMeasure2: '1/2 cup',
-    strMeasure3: '1/4 cup',
-    strMeasure4: '1/2 teaspoon',
-    strMeasure5: '1/2 teaspoon',
-    strMeasure6: '4 Tablespoons',
-    strMeasure7: '2',
-    strMeasure8: '1 (12 oz.)',
-    strMeasure9: '3 cups',
-    strMeasure10: '',
-    strMeasure11: '',
-    strMeasure12: '',
-    strMeasure13: '',
-    strMeasure14: '',
-    strMeasure15: '',
-    strMeasure16: null,
-    strMeasure17: null,
-    strMeasure18: null,
-    strMeasure19: null,
-    strMeasure20: null,
-    strSource: null,
-    strImageSource: null,
-    strCreativeCommonsConfirmed: null,
-    dateModified: null,
-  }],
-};
+const recipes = {
+  teryakiID: '52772',
+  teryakiUrl: 'https://www.themealdb.com/api/json/v1/1/lookup.php?i=52772',
+  margaritaID: '11007',
+  margaritaUrl: 'https://www.thecocktaildb.com/api/json/v1/1/lookup.php?i=11007',
+  aquamarineID: '178319',
+  aquamirineID: 'https://www.thecocktaildb.com/api/json/v1/1/lookup.php?i=178319',
+  notFavID: '52773',
+  notFavUrl: 'https://www.themealdb.com/api/json/v1/1/lookup.php?i=52773',
+  drinkNotFavID: '178320',
+  drinkNotFavUrl: 'https://www.thecocktaildb.com/api/json/v1/1/lookup.php?i=178320',
+}
 
-const mockFetch = () => {
-  jest.spyOn(global, 'fetch');
-  global.fetch.mockResolvedValue({
-    json: jest.fn().mockResolvedValue(data),
-  });
-};
+const str = {
+  favIcon: 'blackHeartIcon.svg',
+  defavIcon: 'whiteHeartIcon.svg',
+}
 
-const mockErrorFetch = () => {
-  jest.spyOn(global, 'fetch');
-  global.fetch.mockResolvedValue({
-    json: jest.fn().mockResolvedValue(),
-  });
-};
+const history = createMemoryHistory()
 
-const mockLocalStorage = (items = {}) => {
-  jest.spyOn(localStorage, 'getItem');
-  jest.spyOn(localStorage, 'setItem');
-  global.localStorage = {
-    items,
-    getItem(key) {
-      return global.localStorage.items[key];
-    },
-    setItem(key, value) {
-      global.localStorage.items[key] = value;
-    },
-  };
-};
-
-const renderRecipesDetailsPage = (id = '52772', pathname = '/foods/52772') => act(() => {
+const renderPage = (id, pathname) => {
   render(
     <GlobalContext.Provider value={ store }>
-      <BrowserRouter>
-        <RecipeDetails
+      <Router history={history}>
+        <RecipeDetails 
           {
             ...{ match: { params: { id } },
               history: { location: { pathname } } }
           }
         />
-      </BrowserRouter>
-    </GlobalContext.Provider>, document.createElement('div'),
-  );
-});
+      </Router>
+    </GlobalContext.Provider>
+  )
+}
 
 describe('Tests for the RecipesDetails component', () => {
-  // beforeEach(() => mockFetch());
-  afterEach(() => {
-    jest.clearAllMocks();
-    jest.clearAllTimers();
-  });
 
-  it('checks if the page renders accordingly', () => {
-    mockFetch();
-    renderRecipesDetailsPage();
-    expect(global.fetch).toHaveBeenCalled();
-  });
+  it('checks if the api is called correctly if the route is /foods', async() => {
+    history.push(`/foods/${recipes.teryakiID}`);
+    mockFetch(id52772);
+    mockLocalStorage('favoriteRecipes', favoriteRecipes);
+    act(() => renderPage(recipes.teryakiID, history.location.pathname));
+    // Sem este "await waitFor" o código quebra porque há uma mudança de estado assíncrona na montagem do componente
+    await waitFor(() => { expect(screen.getByTestId('favorite-btn')).toBeInTheDocument()});
+    expect(global.fetch).toHaveBeenCalledWith(recipes.teryakiUrl);
+  })
 
-  it('checks if the an error is throw if no data comes from the api', () => {
-    mockErrorFetch();
-    renderRecipesDetailsPage();
-    expect(global.fetch).toHaveBeenCalled();
-  });
+  it('checks if the api is called correctly if the route is /drinks', async() => {
+    history.push(`/drinks/${recipes.margaritaID}`);
+    mockFetch(id11007);
+    mockLocalStorage('favoriteRecipes', favoriteRecipes);
+    act(() => renderPage(recipes.margaritaID, history.location.pathname));
+    await waitFor(() => { expect(screen.getByTestId('favorite-btn')).toBeInTheDocument()});
+    expect(global.fetch).toHaveBeenCalledWith(recipes.margaritaUrl);
+  })
 
-  it('checks if a favorited drink is rendered with the black heart icon', async () => {
-    mockFetch();
-    mockLocalStorage({
-      favoriteRecipes: JSON.stringify([{
-        id: '178319',
-        type: 'drink',
-        nationality: '',
-        category: 'Cocktail',
-        alcoholicOrNot: 'Alcoholic',
-        name: 'Aquamarine',
-        image: 'https://www.thecocktaildb.com/images/media/drink/zvsre31572902738.jpg',
-      },
-      {
-        id: '52772',
-        type: 'food',
-        nationality: 'Japanese',
-        category: 'Chicken',
-        alcoholicOrNot: '',
-        name: 'Teriyaki Chicken Casserole',
-        image: 'https://www.themealdb.com/images/media/meals/wvpsxx1468256321.jpg',
-      },
-      ]) });
-    renderRecipesDetailsPage();
-    expect(global.fetch).toHaveBeenCalled();
-    await waitFor(() => { /* Criar algum spinner que desapareça ao ser atualizado
-    o estado local "favorite".
-    Definir aqui um expect(spinner).not.toBeInTheDocument() */ });
+  it('checks if the black heart icon is displayed if the recipe is favorited', async () => {
+    history.push(`/foods/${recipes.teryakiID}`);
+    mockFetch(id52772);
+    mockLocalStorage('favoriteRecipes', favoriteRecipes);
+    act(() => renderPage(recipes.teryakiID, history.location.pathname));
+    await waitFor(() => { expect(screen.getByTestId('favorite-btn')).toBeInTheDocument()});
+    const favIcon = screen.getByAltText('fav icon').src.split('t/')[1];
+    expect(favIcon).toBe(str.favIcon);
+  })
 
-    /* expect(img.src.includes("blackHeart")).toBe(true) */
-  });
-});
+  it('checks if the white heart icon is displayed if the recipe is not favorited', async () => {
+    history.push(`/foods/${recipes.notFavID}`);
+    mockFetch(id52773);
+    mockLocalStorage('favoriteRecipes', favoriteRecipes);
+    act(() => renderPage(recipes.notFavID, history.location.pathname));
+    await waitFor(() => { expect(screen.getByTestId('favorite-btn')).toBeInTheDocument()});
+    const favIcon = screen.getByAltText('fav icon').src.split('t/')[1];
+    expect(favIcon).toBe(str.defavIcon);
+  })
+
+  it('checks if the "start" btn text content is "Start Recipe" if the recipe has not yet been started', async() => {
+    history.push(`/drinks/${recipes.margaritaID}`);
+    mockFetch(id11007);
+    mockLocalStorage('favoriteRecipes', favoriteRecipes);
+    act(() => renderPage(recipes.margaritaID, history.location.pathname));
+    await waitFor(() => { expect(screen.getByTestId('favorite-btn')).toBeInTheDocument()});
+    const startBtn = screen.getByTestId('start-recipe-btn');
+    expect(startBtn.textContent).toBe('Start Recipe');
+  })
+
+  it('checks if the "start" btn text content is "Continue Recipe" if the recipe has been started', async() => {
+    history.push(`/drinks/${recipes.aquamarineID}`);
+    mockFetch(id178319);
+    mockLocalStorage('favoriteRecipes', favoriteRecipes);
+    mockLocalStorage('inProgressRecipes', inProgressRecipes);
+    act(() => renderPage(recipes.aquamarineID, history.location.pathname));
+    await waitFor(() => { expect(screen.getByTestId('favorite-btn')).toBeInTheDocument()});
+    const startBtn = screen.getByTestId('start-recipe-btn');
+    expect(startBtn.textContent).toBe('Continue Recipe');
+  })
+
+  it('checks if the "start" button is hidden if the recipe has already been done', async() => {
+    history.push(`/foods/${recipes.teryakiID}`);
+    mockFetch(id52772);
+    mockLocalStorage('favoriteRecipes', favoriteRecipes);
+    mockLocalStorage('doneRecipes', doneRecipes);
+    act(() => renderPage(recipes.teryakiID, history.location.pathname));
+    await waitFor(() => { expect(screen.getByTestId('favorite-btn')).toBeInTheDocument()});
+    const startLink = screen.getByRole('link').children;
+    expect(startLink.length).toBe(0);
+  })
+
+  it('checks if the "start" button is displayed if the recipe has not yet been done', async() => {
+    history.push(`/drinks/${recipes.margaritaID}`);
+    mockFetch(id11007);
+    mockLocalStorage('favoriteRecipes', favoriteRecipes);
+    mockLocalStorage('doneRecipes', doneRecipes);
+    act(() => renderPage(recipes.margaritaID, history.location.pathname));
+    await waitFor(() => { expect(screen.getByTestId('favorite-btn')).toBeInTheDocument()});
+    expect(screen.getByTestId('start-recipe-btn')).toBeVisible();
+  })
+
+  it('checks if a recipe not yet favorited can be favorited, and its icon changes from empty to filled', async() => {
+    history.push(`/drinks/${recipes.drinkNotFavID}`);
+    mockFetch(id178320);
+    mockLocalStorage();
+    localStorage.setItem('favoriteRecipes', favoriteRecipes);
+    act(() => renderPage(recipes.drinkNotFavID, history.location.pathname));
+    await waitFor(() => { expect(screen.getByTestId('favorite-btn')).toBeInTheDocument()});
+    const prevFavIcon = screen.getByAltText('fav icon').src.split('t/')[1];
+    expect(prevFavIcon).toBe(str.defavIcon);
+    act(() => userEvent.click(screen.getByTestId('favorite-btn')));
+    const updatedFavIcon = screen.getByAltText('fav icon').src.split('t/')[1];
+    expect(updatedFavIcon).toBe(str.favIcon);
+  })
+
+  it('checks if a favorited recipe can be defavorited', async () => {
+    history.push(`/drinks/${recipes.margaritaID}`);
+    mockFetch(id11007);
+    mockLocalStorage('favoriteRecipes', favoriteRecipes);
+    act(() => renderPage(recipes.margaritaID, history.location.pathname));
+    await waitFor(() => { expect(screen.getByTestId('favorite-btn')).toBeInTheDocument()});
+    const prevFavIcon = screen.getByAltText('fav icon').src.split('t/')[1];
+    expect(prevFavIcon).toBe(str.favIcon);
+    act(() => userEvent.click(screen.getByTestId('favorite-btn')));
+    const updatedFavIcon = screen.getByAltText('fav icon').src.split('t/')[1];
+    expect(updatedFavIcon).toBe(str.defavIcon);
+  })
+
+  it('checks if the white heart icon is displayed when there is no fav, and if it is possible to add the recipe as fav', async() => {
+    history.push(`/foods/${recipes.teryakiID}`);
+    mockFetch(id52772);
+    mockLocalStorage();
+    localStorage.clear();
+    act(() => renderPage(recipes.teryakiID, history.location.pathname));
+    await waitFor(() => { expect(screen.getByTestId('favorite-btn')).toBeInTheDocument()});
+    const prevFavIcon = screen.getByAltText('fav icon').src.split('t/')[1];
+    expect(prevFavIcon).toBe(str.defavIcon);
+    act(() => userEvent.click(screen.getByTestId('favorite-btn')));
+    const updatedFavIcon = screen.getByAltText('fav icon').src.split('t/')[1];
+    expect(updatedFavIcon).toBe(str.favIcon);
+  })
+
+  it('checks if by clicking on "share" btn, the url is copied to the clipboard', async() => {
+    // Mock em "exeComamand" foi necessário para mockar a função "clipboardCopy" (linha 108, RecipeDetails.js)
+    window.document.execCommand = jest.fn().mockReturnValue('copy');
+    history.push(`/foods/${recipes.teryakiID}`);
+    mockFetch(id52772);
+    mockLocalStorage('favoriteRecipes', favoriteRecipes);
+    act(() => renderPage(recipes.teryakiID, history.location.pathname));
+    await waitFor(() => { expect(screen.getByTestId('favorite-btn')).toBeInTheDocument()});
+    const shareBtn = screen.getByTestId('share-btn');
+    // useFakeTimers para verificar o retorno do setTimeout
+    jest.useFakeTimers();
+    userEvent.click(shareBtn);
+    expect(screen.getByText('Link copied!')).not.toHaveStyle('display: none');
+    jest.advanceTimersByTime(1500);
+    expect(screen.getByText('Link copied!')).toHaveClass('hidden');
+  })
+
+})
