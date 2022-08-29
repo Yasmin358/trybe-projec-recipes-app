@@ -47,7 +47,7 @@ function DoneRecipes() {
           Drinks
         </button>
       </section>
-      { currentDones?.map((recipe, index) => (
+      { currentDones && currentDones.map((recipe, index) => (
         <CardDoneRecipes
           key={ index }
           type={ recipe.type }
