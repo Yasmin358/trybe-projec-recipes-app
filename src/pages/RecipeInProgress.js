@@ -9,10 +9,12 @@ import GlobalContext from '../context/GlobalContext';
 import { objectFilter } from '../helperFuncions';
 
 function RecipeInProgress(props) {
+  // const { recipe, setRecipe, favorite, setFavorite } = useContext(GlobalContext);
   const { favorite, setFavorite } = useContext(GlobalContext);
   const [pageData, setPageData] = useState({});
   const [ingredients, setIngredients] = useState({});
-  const [recipe, setRecipes] = useState({});
+  const [disabled, setDisabled] = useState(true);
+  const [recipe, setRecipe] = useState({});
   const [recipesInProgress, setRecipesInProgress] = useState(
     { cocktails: [], meals: [] },
   );
@@ -21,9 +23,28 @@ function RecipeInProgress(props) {
     const response = await recipes(url);
     const ing = objectFilter(response[0],
       (key, value) => key.includes('strIngredient') && value);
-    setRecipes(response[0]);
+    setRecipe(response[0]);
     setIngredients(ing);
   };
+
+  useEffect(() => {
+    let name = '';
+    const { match: { params: { id } }, history } = props;
+    if (history.location.pathname.includes('foods')) {
+      name = 'meals';
+    } else { name = 'cocktails'; }
+    const baseIngredients = Object.keys(ingredients).length;
+    const stepsFinish = recipesInProgress[name][id];
+    console.log('baseIngredients', baseIngredients);
+    console.log('stepsFinish', stepsFinish);
+    if (stepsFinish) {
+      if (baseIngredients === stepsFinish.length) {
+        setDisabled(false);
+      } else {
+        setDisabled(true);
+      }
+    }
+  }, [recipesInProgress, props, ingredients]);
 
   const handlePageData = (id, name) => {
     const page = {
@@ -32,10 +53,27 @@ function RecipeInProgress(props) {
     };
     setPageData(page);
   };
+
+  const checkIfRecipeIsFav = (setFavoriteFunc, id2) => {
+    const oldFavs = localStorage.getItem('favoriteRecipes');
+    if (!oldFavs) {
+      setFavoriteFunc(false);
+      return false;
+    }
+    const match = JSON.parse(oldFavs).find((el) => Number(el.id) === Number(id2));
+    if (match) {
+      setFavoriteFunc(true);
+      return true;
+    }
+    setFavoriteFunc(false);
+    return false;
+  };
+
   // DID MOUNT
   useEffect(() => {
     const { match: { params: { id } }, history } = props;
     const getLocalStorage = localStorage.getItem('inProgressRecipes');
+    checkIfRecipeIsFav(setFavorite, id);
     let name = '';
     if (getLocalStorage) {
       const converted = JSON.parse(getLocalStorage);
@@ -63,32 +101,39 @@ function RecipeInProgress(props) {
     const route = history.location.pathname.split(/\b/, 2).at(1);
     const url = `https://www.the${route === 'foods' ? 'meal' : 'cocktail'}db.com/api/json/v1/1/lookup.php?i=${id}`;
     callApi(url);
-  }, [props]);
-
-  const checkIfRecipeIsFav = (setFavoriteFunc, id2) => {
-    const oldFavs = localStorage.getItem('favoriteRecipes');
-    if (!oldFavs) {
-      setFavoriteFunc(false);
-      return false;
-    }
-    const match = JSON.parse(oldFavs).find((el) => Number(el.id) === Number(id2));
-    if (match) {
-      setFavoriteFunc(true);
-      return true;
-    }
-    setFavoriteFunc(false);
-    return false;
-  };
+  }, [props, setFavorite]);
 
   const handleFavBtn = () => {
-    const { match: { params: { thisId } } } = props;
-    const isFavorite = checkIfRecipeIsFav(setFavorite, thisId);
+    const { match: { params: { id } }, history } = props;
+    const route = history.location.pathname.split(/\b/, 2).at(1);
+    const isFavorite = checkIfRecipeIsFav(setFavorite, id);
     if (isFavorite) {
       const favs = JSON.parse(localStorage.getItem('favoriteRecipes'));
-      const newFavs = favs.filter((el) => el.thisId !== thisId);
+      const newFavs = favs.filter((el) => el.id !== id);
       localStorage.setItem('favoriteRecipes', newFavs);
       return setFavorite(false);
     }
+
+    const MINUS_ONE = -1;
+    const { strArea, strCategory, strMeal,
+      strDrink, strMealThumb, strDrinkThumb, strAlcoholic } = recipe;
+    const data = [{
+      id,
+      type: route.slice(route.at(MINUS_ONE), route.length - 1),
+      nationality: strArea || '',
+      category: strCategory,
+      alcoholicOrNot: strAlcoholic || '',
+      name: strMeal || strDrink,
+      image: strMealThumb || strDrinkThumb,
+    }];
+    const oldFavs = localStorage.getItem('favoriteRecipes');
+    if (!oldFavs) {
+      localStorage.setItem('favoriteRecipes', JSON.stringify(data));
+      return setFavorite(true);
+    }
+    const yetAnotherFavs = [...JSON.parse(oldFavs), ...data];
+    localStorage.setItem('favoriteRecipes', JSON.stringify(yetAnotherFavs));
+    setFavorite(true);
   };
 
   const handleShareBtn = () => {
@@ -101,10 +146,6 @@ function RecipeInProgress(props) {
   };
 
   const handleChecked = (event) => {
-    // console.log(recipesInProgress[pageData.page][pageData.id]);
-    // console.log(event.target.checked);
-    // console.log(event.target.name);
-    console.log(event.target.checked);
     const arrayAnterior = recipesInProgress[pageData.page][pageData.id];
     const objAnterior = { ...recipesInProgress };
     let obj = {};
@@ -127,10 +168,15 @@ function RecipeInProgress(props) {
       };
     }
     const payload = { ...objAnterior, [pageData.page]: obj };
-    // console.log(payload);
     setRecipesInProgress(payload);
     localStorage.setItem('inProgressRecipes', JSON.stringify(payload));
   };
+
+  const finishRecipe = () => {
+    const { history } = props;
+    history.push('/done-recipes');
+  };
+
   return (
     <div>
       <img
@@ -179,7 +225,14 @@ function RecipeInProgress(props) {
         ))}
       </ol>
       <p data-testid="instructions">{recipe.strInstructions}</p>
-      <button type="button" data-testid="finish-recipe-btn"> Finalizar Receita</button>
+      <button
+        type="button"
+        data-testid="finish-recipe-btn"
+        disabled={ disabled }
+        onClick={ finishRecipe }
+      >
+        Finalizar Receita
+      </button>
     </div>
   );
 }
