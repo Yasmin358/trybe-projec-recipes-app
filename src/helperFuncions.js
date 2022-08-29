@@ -19,3 +19,7 @@ export function objectForEach(obj, predicate) {
   const keys = Object.keys(obj);
   keys.forEach((key) => predicate(key, obj[key]));
 }
+
+export const wait = (miliseconds) => new Promise(
+  (res) => setTimeout(() => res('test'), miliseconds),
+);
