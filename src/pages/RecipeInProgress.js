@@ -35,8 +35,6 @@ function RecipeInProgress(props) {
     } else { name = 'cocktails'; }
     const baseIngredients = Object.keys(ingredients).length;
     const stepsFinish = recipesInProgress[name][id];
-    console.log('baseIngredients', baseIngredients);
-    console.log('stepsFinish', stepsFinish);
     if (stepsFinish) {
       if (baseIngredients === stepsFinish.length) {
         setDisabled(false);
@@ -138,7 +136,8 @@ function RecipeInProgress(props) {
 
   const handleShareBtn = () => {
     const ONE_HALF_SEC = 1500;
-    clipboardCopy(document.URL);
+    const url = document.URL.split('/in-progress')[0];
+    clipboardCopy(url);
     document.querySelector('.link-copied').classList.toggle('hidden');
     setTimeout(() => {
       document.querySelector('.link-copied').classList.toggle('hidden');
