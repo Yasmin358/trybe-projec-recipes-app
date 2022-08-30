@@ -8,33 +8,6 @@ function DoneRecipes() {
   const { setheaderTitle } = useContext(GlobalContext);
   const [currentDones, setcurrentDones] = useState(getFromLocalStorage);
 
-  // const recipeData = [{
-  //   id: 52771,
-  //   type: 'food',
-  //   nationality: 'Italian',
-  //   category: 'Vegetarian',
-  //   alcoholicOrNot: '',
-  //   name: 'Spicy Arrabiata Penne',
-  //   image: 'https://www.themealdb.com/images/media/meals/ustsqw1468250014.jpg',
-  //   doneDate: 'data',
-  //   tags: ['Pasta', 'Curry'],
-  // },
-  // {
-  //   id: 178319,
-  //   type: 'drink',
-  //   nationality: null,
-  //   category: 'Cocktail',
-  //   alcoholicOrNot: 'Alcoholic',
-  //   name: 'Aquamarine',
-  //   image: 'https://www.thecocktaildb.com/images/media/drink/zvsre31572902738.jpg',
-  //   doneDate: 'data',
-  //   tags: null,
-  // }];
-
-  // localStorage.setItem('doneRecipes', JSON.stringify(recipeData));
-
-  // const desconstruction = Object(getFromLocalStorage);
-
   useEffect(() => {
     setheaderTitle({ title: 'Done Recipes', search: false });
   }, [setheaderTitle]);
@@ -43,9 +16,7 @@ function DoneRecipes() {
     if (!type) {
       return setcurrentDones(getFromLocalStorage);
     }
-    // const favs = getFavoritesFromLocalStorage();
     const filteredDones = getFromLocalStorage.filter((el) => el.type === type);
-    // console.log(filteredDones);
     if (filteredDones.length > 0) return setcurrentDones(filteredDones);
     setcurrentDones(false);
   };
@@ -76,7 +47,7 @@ function DoneRecipes() {
           Drinks
         </button>
       </section>
-      { currentDones?.map((recipe, index) => (
+      { currentDones && currentDones.map((recipe, index) => (
         <CardDoneRecipes
           key={ index }
           type={ recipe.type }
