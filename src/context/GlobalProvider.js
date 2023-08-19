@@ -13,6 +13,10 @@ function GlobalProvider({ children }) {
   const [toogleButton, settoogleButton] = useState('');
   const [recipe, setRecipe] = useState('');
   const [favorite, setFavorite] = useState(false);
+  const [recipesInProgress, setRecipesInProgress] = useState(
+    { cocktails: [], meals: [] },
+  );
+  const [pageData, setPageData] = useState({});
 
   async function requestFoodApi(endpoint) {
     const responseFoods = await foods(endpoint);
@@ -67,6 +71,10 @@ function GlobalProvider({ children }) {
     setapiFoods,
     setRecipe,
     setFavorite,
+    recipesInProgress,
+    setRecipesInProgress,
+    pageData,
+    setPageData,
   };
 
   // monta array de foods e drinks

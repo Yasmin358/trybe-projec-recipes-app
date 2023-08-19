@@ -3,14 +3,13 @@ import React, { useContext, useEffect, useState } from 'react';
 import clipboardCopy from 'clipboard-copy';
 import { recipes } from '../services/themealdb';
 import shareIcon from '../images/shareIcon.svg';
-import favIconWhite from '../images/whiteHeartIcon.svg';
-import favIconBlack from '../images/blackHeartIcon.svg';
 import GlobalContext from '../context/GlobalContext';
 import { objectFilter } from '../helperFuncions';
+import ButtonFavorite from '../components/ButtonFavorite';
 
 function RecipeInProgress(props) {
   // const { recipe, setRecipe, favorite, setFavorite } = useContext(GlobalContext);
-  const { favorite, setFavorite } = useContext(GlobalContext);
+  const { setFavorite } = useContext(GlobalContext);
   const [pageData, setPageData] = useState({});
   const [ingredients, setIngredients] = useState({});
   const [disabled, setDisabled] = useState(true);
@@ -52,26 +51,10 @@ function RecipeInProgress(props) {
     setPageData(page);
   };
 
-  const checkIfRecipeIsFav = (setFavoriteFunc, id2) => {
-    const oldFavs = localStorage.getItem('favoriteRecipes');
-    if (!oldFavs) {
-      setFavoriteFunc(false);
-      return false;
-    }
-    const match = JSON.parse(oldFavs).find((el) => Number(el.id) === Number(id2));
-    if (match) {
-      setFavoriteFunc(true);
-      return true;
-    }
-    setFavoriteFunc(false);
-    return false;
-  };
-
   // DID MOUNT
   useEffect(() => {
     const { match: { params: { id } }, history } = props;
     const getLocalStorage = localStorage.getItem('inProgressRecipes');
-    checkIfRecipeIsFav(setFavorite, id);
     let name = '';
     if (getLocalStorage) {
       const converted = JSON.parse(getLocalStorage);
@@ -100,39 +83,6 @@ function RecipeInProgress(props) {
     const url = `https://www.the${route === 'foods' ? 'meal' : 'cocktail'}db.com/api/json/v1/1/lookup.php?i=${id}`;
     callApi(url);
   }, [props, setFavorite]);
-
-  const handleFavBtn = () => {
-    const { match: { params: { id } }, history } = props;
-    const route = history.location.pathname.split(/\b/, 2).at(1);
-    const isFavorite = checkIfRecipeIsFav(setFavorite, id);
-    if (isFavorite) {
-      const favs = JSON.parse(localStorage.getItem('favoriteRecipes'));
-      const newFavs = favs.filter((el) => el.id !== id);
-      localStorage.setItem('favoriteRecipes', JSON.stringify(newFavs));
-      return setFavorite(false);
-    }
-
-    const MINUS_ONE = -1;
-    const { strArea, strCategory, strMeal,
-      strDrink, strMealThumb, strDrinkThumb, strAlcoholic } = recipe;
-    const data = [{
-      id,
-      type: route.slice(route.at(MINUS_ONE), route.length - 1),
-      nationality: strArea || '',
-      category: strCategory,
-      alcoholicOrNot: strAlcoholic || '',
-      name: strMeal || strDrink,
-      image: strMealThumb || strDrinkThumb,
-    }];
-    const oldFavs = localStorage.getItem('favoriteRecipes');
-    if (!oldFavs) {
-      localStorage.setItem('favoriteRecipes', JSON.stringify(data));
-      return setFavorite(true);
-    }
-    const yetAnotherFavs = [...JSON.parse(oldFavs), ...data];
-    localStorage.setItem('favoriteRecipes', JSON.stringify(yetAnotherFavs));
-    setFavorite(true);
-  };
 
   const handleShareBtn = () => {
     const ONE_HALF_SEC = 1500;
@@ -176,6 +126,8 @@ function RecipeInProgress(props) {
     history.push('/done-recipes');
   };
 
+  const { match, history } = props;
+
   return (
     <div>
       <img
@@ -194,14 +146,10 @@ function RecipeInProgress(props) {
       >
         <img src={ shareIcon } alt="share icon" />
       </button>
-      <button
-        type="button"
-        data-testid="favorite-btn"
-        onClick={ handleFavBtn }
-        src={ favorite ? favIconBlack : favIconWhite } // Por causa do CYPRESS!!
-      >
-        <img src={ favorite ? favIconBlack : favIconWhite } alt="share icon" />
-      </button>
+      <ButtonFavorite
+        historyP={ history }
+        matchP={ match }
+      />
       <ol data-testid="recipe-category">
         {Object.entries(ingredients).map((ingredient, index) => (
           <li
