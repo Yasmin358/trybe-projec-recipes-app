@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import Recomendation from './Recomendation';
 
 function RecomendationCard() {
   const { pathname } = document.location;
@@ -24,27 +25,19 @@ function RecomendationCard() {
     const SIX = 6;
     const recommends = [];
     recipesObj.forEach((rec, i) => { if (i < SIX) recommends.push(rec); });
-    const markup = (array) => array.map((el, i) => (
-      <figure
-        data-testid={ `${i}-recomendation-card` }
-        key={ `${el.idMeal}${i}` || `${el.idDrinks}${i}` }
-        className={ i > 1 ? 'hidden' : '' }
-      >
-        <img
-          src={ el.strMealThumb || el.strDrinkThumb }
-          alt={ el.strMeal || el.strDrink }
-        />
-        <h4 data-testid={ `${i}-recomendation-title` }>{el.strMeal || el.strDrink }</h4>
-        <p>{el.strCategory || el.strAlcoholic }</p>
-      </figure>
+    return recommends.map((rec, i) => (
+      <Recomendation
+        key={ i }
+        index={ i }
+        item={ rec }
+      />
     ));
-    return markup(recommends);
   };
 
   return (
-    <figure>
+    <section className="recomendation-container">
       { recipes && renderCards(recipes)}
-    </figure>
+    </section>
   );
 }
 
