@@ -4,6 +4,7 @@
 
 <p align="center">
 <img alt="Static Badge" src="https://img.shields.io/static/v1?label=STATUS&message=CONCLUIDO&color=blue&style=for-the-badge">
+<img alt="Static Badge" src="https://img.shields.io/static/v1?label=COVERAGE&message=68.53%&color=yellow&style=for-the-badge">
 </p>
 
 <p align="center">
